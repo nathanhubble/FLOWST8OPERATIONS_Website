@@ -1,0 +1,52 @@
+# Node modules (if using any npm packages for development)
+node_modules/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Environment variables (if adding backend later)
+.env
+.env.local
+.env.production
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
+# Deployment
+.vercel
+.netlify
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Backup files
+*.bak
+*.backup

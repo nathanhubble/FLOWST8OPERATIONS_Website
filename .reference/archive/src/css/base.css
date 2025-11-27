@@ -1,0 +1,113 @@
+/* ========================================
+   BASE STYLES & VARIABLES
+   ======================================== */
+
+:root {
+  /* --- Colors --- */
+  /* Primary */
+  --color-primary: hsl(240, 85%, 55%);
+  --color-primary-light: hsl(240, 85%, 65%);
+  --color-primary-dark: hsl(240, 85%, 45%);
+  
+  /* Accent */
+  --color-accent: hsl(280, 75%, 60%);
+  --color-success: hsl(140, 60%, 50%);
+  --color-warning: hsl(35, 90%, 55%);
+  --color-error: hsl(0, 70%, 55%);
+
+  /* Neutrals (Light Mode) */
+  --color-bg: hsl(0, 0%, 100%);
+  --color-bg-secondary: hsl(220, 15%, 97%);
+  --color-bg-tertiary: hsl(220, 15%, 94%);
+  --color-text: hsl(220, 20%, 15%);
+  --color-text-secondary: hsl(220, 15%, 40%);
+  --color-text-tertiary: hsl(220, 10%, 60%);
+  --color-border: hsl(220, 15%, 88%);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, hsl(240, 85%, 55%), hsl(280, 75%, 60%));
+  
+  /* --- Typography --- */
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  
+  /* --- Spacing --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  
+  /* --- UI --- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  --container-width: 1280px;
+  --header-height: 80px;
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] {
+  --color-bg: hsl(220, 20%, 10%);
+  --color-bg-secondary: hsl(220, 18%, 14%);
+  --color-text: hsl(220, 15%, 95%);
+  --color-text-secondary: hsl(220, 10%, 70%);
+  --color-border: hsl(220, 15%, 22%);
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
