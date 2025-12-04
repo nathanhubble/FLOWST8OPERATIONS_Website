@@ -1,91 +1,79 @@
 # FLOWST8 Website - File Structure Reference
 
-## Current Files for Web Development
+## Current Structure (React + Vite + TypeScript)
 
-### ✅ What You HAVE (and need):
-
-**Directives** (`directives/`):
-- `company_context.md` - Brand, tone, messaging
-- `website_architecture.md` - Tech stack, structure, standards
-- `design_system.md` - Colors, typography, components
-- `content_strategy.md` - Page content, SEO, CTAs
-
-**Development Setup**:
-- `README.md` - Workspace documentation
-- `.gitignore` - Version control exclusions
-- `src/` - Source code directory (CSS, JS)
-- `public/` - Static assets (images, icons, fonts)
-- `.agent/workflows/` - Development workflows
-
-**Agent Instructions**:
-- `GEMINI.md`, `AGENTS.md`, `CLAUDE.md` - AI agent configs
-
-**Reference**:
-- `.reference/services/` - Service content for website copy
-
----
-
-## ❌ What You DON'T NEED (Python-specific):
-
-This is a **static website project** (HTML/CSS/JS), not Python automation:
-
-- **NO `execution/`** - Not needed (no Python scripts to execute)
-- **NO Python `venv/`** - Not needed (no Python dependencies)
-- **NO `requirements.txt`** - Not needed (no Python packages)
-- **NO `.env`** - Not needed unless adding backend later
-- **NO `tmp/`** - Not needed (can create if needed for temp assets)
-
----
-
-## 📦 Optional Files You MIGHT Add:
-
-### If using npm for development tools:
-```bash
-npm init -y  # Creates package.json
 ```
-Then install dev dependencies like:
-```json
-{
-  "devDependencies": {
-    "live-server": "^1.2.2",
-    "lighthouse": "^11.0.0"
-  }
-}
+AG - FLOWST8 Website/
+├── src/                      # All source code
+│   ├── App.tsx               # Main React component
+│   ├── index.tsx             # Entry point
+│   ├── types.ts              # TypeScript definitions
+│   ├── vite-env.d.ts         # Vite type declarations
+│   ├── components/           # React components
+│   │   ├── InteractiveDemo.tsx
+│   │   ├── Marquee.tsx
+│   │   ├── Modals.tsx
+│   │   └── ui/               # Reusable UI components
+│   │       ├── Button.tsx
+│   │       └── FadeIn.tsx
+│   └── services/             # API services
+│       └── geminiService.ts  # Gemini AI integration
+│
+├── directives/               # Development guidelines
+│   ├── company_context.md    # Brand, tone, messaging
+│   ├── website_architecture.md
+│   ├── design_system.md
+│   └── content_strategy.md
+│
+├── .agent/workflows/         # Agent automation workflows
+│   ├── create_component.md
+│   ├── deploy_website.md
+│   ├── initialize_project.md
+│   ├── optimize_seo.md
+│   ├── sync_agent_files.md
+│   └── update_global_core.md
+│
+├── .archive/                 # Archived versions
+│   ├── v1-20251204/
+│   ├── v1_backup_before_v3/
+│   └── v3_original_upload/
+│
+├── .reference/               # Reference documentation
+│   ├── CAL_COM_INTEGRATION.md
+│   ├── FILE_STRUCTURE.md
+│   ├── archive/
+│   └── services/
+│
+├── global_core/              # Shared automation primitives
+│
+├── index.html                # HTML entry point
+├── package.json              # Dependencies
+├── tsconfig.json             # TypeScript config
+├── vite.config.ts            # Vite config
+├── .env.local                # API keys (gitignored)
+├── .gitignore
+├── README.md
+├── GEMINI.md                 # Gemini agent instructions
+├── AGENTS.md                 # Agent instructions
+├── CLAUDE.md                 # Claude agent instructions
+└── GLOBAL_CORE_IN_THIS_WORKSPACE.md
 ```
 
-### If adding a backend later:
-- `.env` - Environment variables
-- `server/` - Backend code
-- Database configs
+## Key Directories
 
----
+| Directory | Purpose |
+|-----------|---------|
+| `src/` | All React/TypeScript source code |
+| `directives/` | Development guidelines and SOPs |
+| `.agent/workflows/` | Slash command workflows |
+| `.archive/` | Versioned backups |
+| `global_core/` | Shared automation components |
 
-## Current vs Python Automation Workspace
+## Important Files
 
-| File/Folder | Website Dev | Python Automation |
-|-------------|-------------|-------------------|
-| `directives/` | ✅ Web directives | ✅ Automation SOPs |
-| `src/` | ✅ CSS/JS | ❌ |
-| `public/` | ✅ Images/assets | ❌ |
-| `execution/` | ❌ | ✅ Python scripts |
-| `venv/` | ❌ | ✅ Virtual env |
-| `.env` | Optional | ✅ API keys |
-| `.gitignore` | ✅ Node/IDE | ✅ Python/venv |
-| `README.md` | ✅ | ✅ |
-
----
-
-## Summary
-
-**This workspace is for WEBSITE DEVELOPMENT, not Python automation.**
-
-If you need a Python automation workspace (for actual automation workflows, not the website), that should be a separate workspace.
-
-**For this website project, you have everything you need:**
-- ✅ Directives for guidance
-- ✅ Structure for code (src/, public/)
-- ✅ Workflows for development
-- ✅ Documentation (README)
-- ✅ Git setup (.gitignore)
-
-**Next step**: Run `/initialize_project` to create actual HTML/CSS/JS files!
+| File | Purpose |
+|------|---------|
+| `src/App.tsx` | Main website component |
+| `vite.config.ts` | Build and dev server config |
+| `.env.local` | API keys (VITE_GEMINI_API_KEY) |
+| `GEMINI.md` | Agent instructions for this workspace |

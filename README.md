@@ -1,20 +1,52 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# FLOWST8 OPERATIONS Website
 
-# Run and deploy your AI Studio app
+A modern, premium React + TypeScript website for FLOWST8 OPERATIONS AI automation agency.
 
-This contains everything you need to run your app locally.
+## Tech Stack
 
-View your app in AI Studio: https://ai.studio/apps/drive/1jVMPlpEfQ1PxxQ9P-rGw_9xUvSq2UPPg
+- **React 19** + **TypeScript**
+- **Vite 6** (dev server & build)
+- **Google Gemini AI** (interactive demo)
 
-## Run Locally
+## Quick Start
 
-**Prerequisites:**  Node.js
+```bash
+# Install dependencies
+npm install
 
+# Set your Gemini API key
+echo "VITE_GEMINI_API_KEY=your_key_here" > .env.local
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# Start dev server
+npm run dev
+```
+
+Visit `http://localhost:3000`
+
+## Project Structure
+
+```
+├── src/                 # Source code
+│   ├── App.tsx          # Main app component
+│   ├── components/      # React components
+│   ├── services/        # API services (Gemini)
+│   └── types.ts         # TypeScript types
+├── directives/          # Development guidelines
+├── .agent/workflows/    # Agent workflows
+├── .archive/            # Archived versions
+├── .reference/          # Reference docs
+└── global_core/         # Shared automation primitives
+```
+
+## Deployment
+
+Connected to Vercel via GitHub. Push to `main` triggers auto-deploy.
+
+**Environment Variable Required:**
+- `VITE_GEMINI_API_KEY` - Your Gemini API key
+
+## Development
+
+- `/create_component` - Create new components
+- `/deploy_website` - Deploy to production
+- `/optimize_seo` - SEO optimization
