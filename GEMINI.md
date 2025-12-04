@@ -60,6 +60,36 @@ Use workflows in `.agent/workflows/` for common tasks:
 - `/create_component` - Build new reusable components
 - `/deploy_website` - Deploy to production
 - `/optimize_seo` - SEO and performance optimization
+- `/update_global_core` - Update Global Core to latest version
+
+### 5. Global Core Integration
+
+This workspace has access to **Global Core** - a shared repository of universal automation primitives located in `global_core/`.
+
+#### What Global Core Provides
+- **Model Routing**: Intelligent LLM selection with cost optimization (`core_routing/model_routing/`)
+- **Quality Assurance**: Meta-rubrics and self-evaluation (`core_directives/output_quality_assurance.md`)
+- **Workflow Validation**: Automation idea validation (`core_directives/workflow_validation.md`)
+- **Documentation Generation**: Auto-generate diagrams and handover docs (`core_executions/handover_ux_layer/`)
+- **System Expansion**: Best practices for workspace growth (`core_directives/system_expansion_guidelines.md`)
+
+#### When to Use Global Core vs Website Workflows
+
+**Use Global Core when you need:**
+- LLM model routing for cost-effective content generation
+- Self-evaluation and quality rubrics for generated code
+- Workflow validation before implementing new automations
+- Auto-generated documentation or diagrams
+
+**Use Website Workflows for:**
+- Creating React components and website features
+- Deploying the FLOWST8 website
+- SEO optimization and performance tuning
+- Website-specific development tasks
+
+**For complete documentation**, see `GLOBAL_CORE_IN_THIS_WORKSPACE.md` in the workspace root.
+
+**To update Global Core**, use `/update_global_core` workflow or run `cd global_core && git pull origin main`.
 
 ## Development Standards
 

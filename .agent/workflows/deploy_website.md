@@ -1,8 +1,20 @@
 ---
 description: Deploy FLOWST8 website to production
+version: 1.1.0
+last_updated: 2025-12-01
+concurrency_safe: false
+auto_run_safe: false
+safety_level: high
 ---
 
 # Deploy Website Workflow
+
+**Version:** 1.1.0  
+**Purpose:** Guide the deployment process for the FLOWST8 website, ensuring all assets are optimized and tested before going live.  
+**Inputs:** Completed website, tested pages, optimized assets, hosting platform credentials  
+**Outputs:** Live production website, deployment documentation, post-launch monitoring setup  
+**Concurrency Notes:** NOT safe to run in parallel. Only one deployment should occur at a time. Requires user confirmation for production deployment.  
+**Safety Level:** HIGH - Affects production environment. Always requires pre-deployment checklist verification.
 
 This workflow guides the deployment process for the FLOWST8 website, ensuring all assets are optimized and tested before going live.
 

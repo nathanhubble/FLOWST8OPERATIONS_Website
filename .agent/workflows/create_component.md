@@ -1,8 +1,18 @@
 ---
 description: Create a new reusable component following design system
+version: 1.1.0
+last_updated: 2025-12-01
+concurrency_safe: true
+auto_run_safe: false
 ---
 
 # Create Component Workflow
+
+**Version:** 1.1.0  
+**Purpose:** Guide the creation of new reusable components for the FLOWST8 website, ensuring consistency with the design system.  
+**Inputs:** Component name, purpose, requirements, accessibility needs  
+**Outputs:** HTML structure, CSS styles, JavaScript (if needed), documentation  
+**Concurrency Notes:** Safe to run in parallel with other workflows. Each component is independent. No shared state.
 
 This workflow guides the creation of new reusable components for the FLOWST8 website, ensuring consistency with the design system.
 

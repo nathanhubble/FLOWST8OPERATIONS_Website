@@ -36,7 +36,7 @@ export const SERVICES: ServiceItem[] = [
     description: "A structured deep-dive into your workflows to identify bottlenecks, manual work, and automation opportunities.",
     points: [
       "Full workflow mapping",
-      "Identification of 3–10 high-value opportunities",
+      "Identification of 3-10 high-value opportunities",
       "Strategic roadmap for improvement",
       "Phased recommendations"
     ]
@@ -57,7 +57,7 @@ export const PROCESS_STEPS: StepItem[] = [
   {
     number: "01",
     title: "Discovery & Mapping",
-    description: "We analyse your operations, identify bottlenecks, and surface 3–10 automation opportunities across your tools and processes."
+    description: "We analyse your operations, identify bottlenecks, and surface 3-10 automation opportunities across your tools and processes."
   },
   {
     number: "02",
@@ -74,10 +74,10 @@ export const PROCESS_STEPS: StepItem[] = [
 export const WORKFLOW_EXAMPLES: WorkflowItem[] = [
   { title: "End-to-end lead generation & qualification pipelines", icon: IconType.MAIL },
   { title: "Hands-free content creation & distribution systems", icon: IconType.FILE },
-  { title: "Intelligent lead routing with instant personalized responses", icon: IconType.USER },
+  { title: "Intelligent lead routing with instant personalised responses", icon: IconType.USER },
   { title: "AI-powered client onboarding & project intake", icon: IconType.CHECK },
   { title: "Automated sales pipelines & CRM sync workflows", icon: IconType.DATABASE },
-  { title: "And much, much more - if you can imagine it, we can build it", icon: IconType.CREATIVE },
+  { title: "And much, much more (if you can imagine it, we can build it)", icon: IconType.CREATIVE },
 ];
 
 export const FAQS: FAQItem[] = [
@@ -103,7 +103,7 @@ export const FAQS: FAQItem[] = [
   },
   {
     question: "How long does it take to build an automation workflow?",
-    answer: "Most builds take 1–2 weeks. Simple automations can be completed in a few days. Larger multi-step systems may take longer — but you’ll always get a clear timeline upfront."
+    answer: "Most builds take 1-2 weeks. Simple automations can be completed in a few days. Larger multi-step systems may take longer - but you'll always get a clear timeline upfront."
   },
   {
     question: "What if my workflows are messy or undocumented?",

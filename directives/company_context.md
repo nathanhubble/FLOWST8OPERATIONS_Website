@@ -42,5 +42,7 @@ When producing client facing outputs:
 - **Automation (Transformation) Partner**: Our core positioning until niche evolution is defined.
 - **Training & Literacy**: Workshops, guidance and sessions teaching teams how to use AI tools effectively.
 - **Consultancy & Automation Audits**: Diagnosis of business operations, identification of automation opportunities, recommended architecture and workflow design.
+  - **Quick Strike Audits**: Fast, 6-8 hour opportunity assessments priced at £1,000-£3,000. Identify highest ROI automations and immediate inefficiencies, quantify cost of inaction (COI), and deliver a short actionable roadmap focused on quick wins.
+  - **Enterprise Audits**: Deeper multi-phase evaluations designed for larger or more complex organisations. Map full operational workflows, systems, data flows, teams, and bottlenecks, delivering an in-depth strategy, multi-month roadmap, risk analysis, and detailed solution architecture for high-scale transformation.
 - **Integrated Custom Development**: Hands-on building of workflows, agents, integrations, and automation infrastructure tailored to client needs.
 - **Operational Efficiency**: The primary value delivered to clients: reduced manual work, lower costs, faster processes, consistent execution.

@@ -1,8 +1,20 @@
 ---
 description: Optimize website for search engines and performance
+version: 1.1.0
+last_updated: 2025-12-01
+concurrency_safe: true
+auto_run_safe: false
+performance_targets: "Lighthouse 90+ Performance, 95+ Accessibility, 100 SEO"
 ---
 
 # SEO Optimization Workflow
+
+**Version:** 1.1.0  
+**Purpose:** Ensure the FLOWST8 website follows SEO best practices for maximum visibility and performance.  
+**Inputs:** Complete website structure, content-filled pages, `content_strategy.md`  
+**Outputs:** Optimized meta tags, structured data, sitemap, robots.txt, accessibility improvements, performance optimizations  
+**Concurrency Notes:** Safe to run in parallel with component creation. Independent optimization checks.  
+**Performance Targets:** Lighthouse scores - Performance: 90+, Accessibility: 95+, SEO: 100
 
 This workflow ensures the FLOWST8 website follows SEO best practices for maximum visibility and performance.
 

@@ -1,8 +1,20 @@
 ---
 description: Initialize FLOWST8 website project structure and development environment
+version: 1.1.0
+last_updated: 2025-12-01
+concurrency_safe: true
+auto_run_safe: false
+has_turbo_commands: true
 ---
 
 # Initialize Project Workflow
+
+**Version:** 1.1.0  
+**Purpose:** Set up the complete FLOWST8 website development environment with all necessary files and structure.  
+**Inputs:** Workspace directory, directives (architecture, design system, content strategy)  
+**Outputs:** Complete directory structure, CSS files with design system, HTML pages, JavaScript files, dev server running  
+**Concurrency Notes:** Safe to run once per new project. Contains `// turbo` annotation for auto-running dev server command.  
+**Auto-Run Commands:** Step 7 (dev server) is marked with `// turbo` for safe auto-execution.
 
 This workflow sets up the complete FLOWST8 website development environment with all necessary files and structure.
 
