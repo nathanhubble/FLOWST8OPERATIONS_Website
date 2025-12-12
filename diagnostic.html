@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FLOWST8 OPERATIONS</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧊</text></svg>" />
+    <title>System Diagnostic | FLOWST8</title>
+    <link rel="icon" type="image/png" href="logo2.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,6 +31,7 @@
               'blink': 'blink 1s step-end infinite',
               'spin-slow': 'spin 10s linear infinite',
               'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'scan': 'scan 2s linear infinite',
             },
             keyframes: {
               scroll: {
@@ -44,6 +45,10 @@
               'pulse-glow': {
                 '0%, 100%': { opacity: '1' },
                 '50%': { opacity: '0.5' },
+              },
+              scan: {
+                '0%': { transform: 'translateY(-100%)' },
+                '100%': { transform: 'translateY(100%)' }
               }
             }
           },
@@ -51,101 +56,20 @@
       }
     </script>
     <style>
-      html {
-        scroll-behavior: smooth;
-      }
       body {
         background-color: #0F1115;
         color: #EAEAEA;
-      }
-      .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-      }
-      .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
       }
       .glass-panel {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
       }
-      
-      /* Infinite Blueprint Animation */
-      .blueprint-container {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-        perspective: 1000px;
-        background-color: #0F1115;
-        z-index: 0;
-      }
-      .blueprint-floor {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background-image: 
-          linear-gradient(rgba(160, 240, 230, 0.15) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(160, 240, 230, 0.15) 1px, transparent 1px);
-        background-size: 50px 50px;
-        transform: rotateX(60deg);
-        animation: blueprint-scroll 3s linear infinite;
-      }
-      .blueprint-vignette {
-        position: absolute;
-        inset: 0;
-        /* Radial gradient: Charcoal Center -> Transparent Edge */
-        /* Hides grid in center for readability */
-        background: radial-gradient(circle at 50% 50%, #0F1115 10%, rgba(15, 17, 21, 0.8) 40%, transparent 100%);
-        pointer-events: none;
-      }
-      @keyframes blueprint-scroll {
-        0% { background-position: 0 0; }
-        100% { background-position: 0 50px; }
-      }
-
-      /* Blueprint Grid Pattern for other sections */
       .blueprint-grid {
         background-image:
           linear-gradient(rgba(160, 240, 230, 0.05) 1px, transparent 1px),
           linear-gradient(90deg, rgba(160, 240, 230, 0.05) 1px, transparent 1px);
         background-size: 30px 30px;
-      }
-
-      /* Isometric Data Stream Animation (Retained if needed elsewhere) */
-      .iso-scene {
-        position: relative;
-        width: 280px; 
-        height: 280px;
-        transform-style: preserve-3d;
-        transform: rotateX(60deg) rotateZ(-45deg);
-        will-change: transform;
-      }
-      .iso-block {
-        position: absolute;
-        width: 50px;
-        height: 50px;
-        background: rgba(15, 17, 21, 0.85); 
-        border: 2px solid #A0F0E6; 
-        box-shadow: 4px 4px 0px 0px #000000;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        backdrop-filter: blur(4px);
-        will-change: transform, background, border-color;
-      }
-      .iso-block:hover {
-        background: rgba(160, 240, 230, 0.25);
-        border-color: #FFFFFF;
-        box-shadow: 8px 8px 0px 0px #000000;
-        z-index: 10;
-        animation-play-state: paused;
-        transform: translateZ(40px) !important;
-        cursor: crosshair;
-      }
-      @keyframes iso-wave {
-        0%, 100% { transform: translateZ(0px); }
-        50% { transform: translateZ(20px); }
       }
     </style>
   <script type="importmap">
@@ -164,10 +88,9 @@
   (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
   Cal("init", "discovery-call", {origin:"https://app.cal.com"});
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="./index.tsx"></script>
+  </body>
 </html>
