@@ -7,6 +7,40 @@
 
 > This workspace is dedicated to developing the **FLOWST8 OPERATIONS agency website**. All work should focus on creating a modern, high-performing, accessible website that showcases FLOWST8's AI automation services and generates leads.
 
+## 0. Meta-Instructions & Operating Principles
+
+> [!IMPORTANT]
+> These principles supersede all others. They describe HOW you think and operate, not just what you build.
+
+### Protocol 0: Request Evaluation Layer
+**Before executing ANY user request**, you must first run a mental "Request Evaluation" pass:
+1.  **Analyze Intent**: What is the user *really* asking for? What is the "job to be done"?
+2.  **Optimize Strategy**: Is the requested method the best way? Can I suggest a superior approach?
+3.  **Check Constraints**: Does this violate any Iron Laws or Directives?
+4.  **Refine Plan**: Ensure the response/action is optimized for maximum value, not just compliance.
+
+**Output requirement**: If you identify a significant optimization or risk during this layer, briefly state it before proceeding. "I've evaluated your request and propose we..."
+
+### Protocol 1: The Universal Pattern Mandate
+**Everything added to this workspace MUST incorporate:**
+1.  **The DOE Framework** (Directive-Orchestration-Execution)
+    -   *Directive*: Must consult or create a Source of Truth.
+    -   *Orchestration*: Must have a clear logical flow/process.
+    -   *Execution*: The actual work.
+2.  **Self-Annealing Capabilities**
+    -   Must include logic to detect failure.
+    -   Must include logic to correct itself (fix) without human intervention.
+    -   Must include logic to improve over time (prevent recurrence).
+
+### Protocol 2: The Law of Simplicity
+**Make every task and code change as simple as humanly possible.**
+1.  **Minimize Footprint**: Changes should impact as little code as possible.
+2.  **Avoid Complexity**: Do not over-engineer. If a simple fix works, use it.
+3.  **Targeted Action**: Only touch necessary code relevant to the task.
+4.  **Stability First**: The goal is to NOT introduce bugs. Simplicity ensures stability.
+
+**Never create a workflow, agent, or script without these two patterns.**
+
 ## Core Principles
 
 ### 1. Website Development Focus
@@ -41,11 +75,12 @@ Located in `directives/`:
 **Always consult these directives before building.** They define what and how to build.
 
 #### **Orchestration** (Your Role)
-- Read directives to understand requirements
-- Plan component architecture
-- Execute development using directives as guide
-- Self-anneal when issues arise
-- Verify quality against directive standards
+#### **Orchestration** (Your Role)
+- **Plan**: Create `task.md` and `implementation_plan.md` (PLANNING mode).
+- **Verify**: **CRITICAL**: Before executing complex changes, `notify_user` to review your plan.
+- **Execute**: Work through `task.md` items, explaining changes at a high level.
+- **Anneal**: Check for failures and fix root causes immediately.
+- **Verify**: QA against directive standards.
 
 #### **Execution** (The Code)
 - HTML pages in root
@@ -53,16 +88,67 @@ Located in `directives/`:
 - JavaScript in `src/js/`
 - Assets in `public/`
 
-### 4. Workflows
+### 4. Iron Laws
+
+These are non-negotiable principles adapted from proven development practices:
+
+#### No Completion Without Verification
+```
+NEVER claim work is complete without fresh evidence.
+```
+
+Before claiming ANY task is done:
+1. **Run** the verification command (Lighthouse, visual check, responsive test)
+2. **Read** the full output
+3. **Confirm** the output supports your claim
+4. **THEN** claim completion
+
+**Red Flags - STOP if you catch yourself:**
+- Using "should work now" or "looks correct"
+- Expressing satisfaction before verification ("Great!", "Done!")
+- About to commit/deploy without running checks
+- Thinking "just this once" about skipping verification
+
+#### No Fixes Without Root Cause
+```
+ALWAYS find root cause before attempting fixes.
+```
+
+When something breaks:
+1. **STOP** - No fixes until you understand the cause
+2. **Investigate** - What evidence shows the actual problem?
+3. **Hypothesize** - What's the minimal test to prove/disprove?
+4. **Fix** - Address root cause, not symptoms
+5. **Verify** - Run full verification, not just the broken part
+
+**Symptom fixes are failure.** Quick patches mask underlying issues.
+
+#### The Senior Developer Standard (NO LAZY FIXES)
+```
+DO NOT BE LAZY. IF THERE IS A BUG, FIND THE ROOT CAUSE AND FIX IT.
+```
+- **No Temporary Fixes**: Solve the problem once and for all.
+- **No "Good Enough"**: You are a Senior Developer. Aim for perfection and robustness.
+- **Simplicity**: Complex fixes are often lazy fixes (throwing code at a problem). Find the elegant, simple solution.
+
+### 5. Workflows
 
 Use workflows in `.agent/workflows/` for common tasks:
 - `/initialize_project` - Set up complete project structure
 - `/create_component` - Build new reusable components
 - `/deploy_website` - Deploy to production
 - `/optimize_seo` - SEO and performance optimization
+- `/verify` - Pre-deployment verification checks
+- `/brainstorm_feature` - Collaborative feature planning
+- `/write_plan` - Detailed implementation planning
 - `/update_global_core` - Update Global Core to latest version
 
-### 5. Global Core Integration
+### 6. Agents
+
+Use agents in `.agent/agents/` for specialized tasks:
+- `code-reviewer` - Review completed work against design system and standards
+
+### 7. Global Core Integration
 
 This workspace has access to **Global Core** - a shared repository of universal automation primitives located in `global_core/`.
 

@@ -24,6 +24,25 @@ This workflow guides the deployment process for the FLOWST8 website, ensuring al
 - Content finalized
 - Hosting platform selected (GitHub Pages, Netlify, Vercel, etc.)
 
+## DOE Framework Integration
+
+### Directives to Consult
+Before deployment, review these directives:
+- **`directives/website_architecture.md`**: Hosting configuration and build requirements
+- **`directives/content_strategy.md`**: SEO checklist and metadata requirements
+- **`directives/company_context.md`**: Legal and contact info verification
+
+### Orchestration
+This workflow orchestrates the deployment pipeline:
+1. Verify pre-conditions (tests pass, assets optimized)
+2. Execute optimization steps (minification, compression)
+3. Deploy to target environment
+4. Verify post-deployment status
+5. Rollback if verification fails
+
+### Execution
+Execute the deployment steps below. If deployment fails, trigger self-annealing rollback procedures.
+
 ## Steps
 
 ### 1. Pre-Deployment Checklist
@@ -164,6 +183,30 @@ Create `DEPLOYMENT.md`:
 - ✅ Forms functional
 - ✅ No console errors
 - ✅ Mobile responsive
+
+## Self-Annealing
+
+When deployment fails:
+
+### Build Failure
+If optimization or build step fails:
+1. **Analyze logs** - Identify specific error (syntax, missing file)
+2. **Revert** - Discard temp changes (`git reset --hard`)
+3. **Fix** - Address the code issue locally
+4. **Retry** - Run deployment again from start
+
+### Deployment Verification Failure
+If live site has issues:
+1. **Rollback** - Revert to previous working commit/deploy immediately
+2. **Diagnose** - Check production logs vs local behavior
+3. **Fix** - Apply fix to main branch
+4. **Redeploy** - Deploy fixed version
+
+### "Not Live" Detection
+If DNS/URL is unreachable:
+1. **Wait** - Allow propagation time (up to 24h for DNS)
+2. **Check Status** - Verify platform status page
+3. **Check Config** - Verify DNS settings in domain provider
 
 ## Troubleshooting
 

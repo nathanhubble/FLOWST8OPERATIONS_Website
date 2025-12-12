@@ -14,6 +14,24 @@ Run this workflow when:
 - Monthly maintenance (recommended schedule)
 - Before starting a new project phase that might benefit from latest primitives
 
+## DOE Framework Integration
+
+### Directives to Consult
+- **`GLOBAL_CORE_IN_THIS_WORKSPACE.md`**: Guide to integration and usage
+- **`global_core/README.md`**: Upstream documentation and changelog
+
+### Orchestration
+This workflow orchestrates the update process:
+1. Verify prerequisite state (clean git status)
+2. Fetch upstream metadata
+3. Review pending changes
+4. Execute update (pull/merge)
+5. Verify update success and integrity
+6. Resume normal operations
+
+### Execution
+Execute steps below. If update fails due to conflicts or network issues, trigger self-annealing.
+
 ## Prerequisites
 
 - Global Core is already cloned at `global_core/`
@@ -165,6 +183,30 @@ git diff
 ```
 
 Either commit changes or reset to clean state.
+
+## Self-Annealing
+
+When update fails:
+
+### Merge Conflict
+If git reports conflicts:
+1. **Stash** - `git stash` to save local changes
+2. **Retry** - Pull again on clean state
+3. **Pop** - `git stash pop` to re-apply changes
+4. **Resolve** - Manually fix conflicts in editor
+
+### Network Failure
+If `git fetch` times out:
+1. **Wait** - Pause for 30s
+2. **Check** - Verify internet connection
+3. **Retry** - Run command again
+4. **Abort** - If persistent, stop and try later
+
+### Corrupt Repo
+If git object errors occur:
+1. **Backup** - Rename folder to `global_core_backup`
+2. **Re-clone** - Clone fresh copy from GitHub
+3. **Restore** - specific local configs if needed
 
 ## Best Practices
 

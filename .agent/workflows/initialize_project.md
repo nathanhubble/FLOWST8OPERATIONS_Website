@@ -22,6 +22,26 @@ This workflow sets up the complete FLOWST8 website development environment with 
 - Workspace is in: `/Users/macbookpro15/Documents/PANDY'S BOX/FLOWST8 OPERATIONS/AG - FLOWST8 Website`
 - Directives are already created (architecture, design system, content strategy)
 
+## DOE Framework Integration
+
+### Directives to Consult
+Before initialization, review these directives:
+- **`directives/website_architecture.md`**: File organization, tech stack, directory structure
+- **`directives/company_context.md`**: Basic site metadata (title, description)
+- **`directives/design_system.md`**: Base CSS variable definitions
+
+### Orchestration
+This workflow orchestrates project setup:
+1. Validate environmental prerequisites
+2. Establish directory structure
+3. Generate core CSS/JS/HTML files from templates
+4. Initialize version control
+5. Launch development environment
+6. Verify successful startup
+
+### Execution
+Execute steps below. If initialization encounters conflicts or missing tools, trigger self-annealing.
+
 ## Steps
 
 ### 1. Verify Directory Structure
@@ -90,6 +110,30 @@ npx -y live-server --port=3000 --open="/index.html"
 - ✅ JavaScript files ready for functionality
 - ✅ Development server running
 - ✅ Can navigate between pages
+
+## Self-Annealing
+
+When initialization fails:
+
+### Directory Conflict
+If directory already exists:
+1. **Check** - Is it empty? If yes, proceed.
+2. **Backup** - If not empty, rename to `_backup_[date]`
+3. **Notify** - Inform user of existing content
+4. **Retry** - Create clean directory
+
+### Missing Utility
+If `npx` or `git` command not found:
+1. **Verify** - Run `node -v` or `git --version`
+2. **Install** - Request user install missing tool (Node.js/Git)
+3. **Retry** - Run step again
+
+### Port Conflict
+If dev server fails to start (port in use):
+1. **Detect** - "EADDRINUSE" error
+2. **Kill** - Find process using port and kill (if safe)
+3. **Alternative** - Try next available port (e.g., 3001)
+4. **Retry** - Start server on new port
 
 ## Next Steps
 After initialization:

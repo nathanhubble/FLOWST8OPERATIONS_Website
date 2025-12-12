@@ -18,6 +18,22 @@ Run this workflow:
 - When updating workflow lists or directives
 - During workspace maintenance
 
+## DOE Framework Integration
+
+### Directives to Consult
+The primary directive for this workflow is **`GEMINI.md`** itself, as it serves as the source of truth for agent behavior.
+
+### Orchestration
+This workflow orchestrates configuration synchronization:
+1. Identify the source of truth among instruction files
+2. Detect discrepancies between files
+3. Propagate changes from source to targets
+4. Verify synchronization success
+5. Commit changes to version control
+
+### Execution
+Execute steps below. If sync fails or detects conflicts, trigger self-annealing.
+
 ## How It Works
 
 The workflow compares all three files and ensures they're identical. If differences are found, it updates the out-of-sync files to match.
@@ -147,11 +163,32 @@ git checkout HEAD~1 -- GEMINI.md  # Restore previous version
 ```
 
 ### Want to See Exact Differences
-
 Use a more detailed diff:
 ```bash
 diff -u AGENTS.md GEMINI.md | head -50
 ```
+
+## Self-Annealing
+
+When sync fails:
+
+### Files Differ After Sync
+If `diff` still shows output:
+1. **Check Permissions** - Ensure files are writable
+2. **Force Copy** - Run `cp -f` to force overwrite
+3. **Verify** - Run `ls -l` to check file sizes match
+
+### Source Ambiguity
+If unsure which file is newest:
+1. **Check Git** - `git log -1 [filename]` for last commit
+2. **Check Time** - `ls -lt` for modification time
+3. **Ask** - If still ambiguous, ask user for source of truth
+
+### Git Lock
+If git operations fail:
+1. **Check Lock** - Look for `.git/index.lock`
+2. **Remove** - Delete lock file if no other git process running
+3. **Retry** - Attempt commit again
 
 ## Best Practices
 

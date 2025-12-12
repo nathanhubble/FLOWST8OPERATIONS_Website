@@ -23,6 +23,24 @@ This workflow ensures the FLOWST8 website follows SEO best practices for maximum
 - Content added to all pages
 - `content_strategy.md` reviewed
 
+## DOE Framework Integration
+
+### Directives to Consult
+Before optimization, review these directives:
+- **`directives/content_strategy.md`**: Target keywords, meta tag templates, CTA requirements
+- **`directives/website_architecture.md`**: Performance baselines, technical SEO constraints
+
+### Orchestration
+This workflow orchestrates SEO optimization:
+1. Audit current state against targets
+2. Apply on-page optimizations (tags, structure, schema)
+3. Optimize technical assets (images, minification)
+4. Validate against performance targets
+5. Generate submission artifacts (sitemap, robots.txt)
+
+### Execution
+Execute optimizations below. If scores regress or targets aren't met, trigger self-annealing.
+
 ## Steps
 
 ### 1. Page Titles & Meta Descriptions
@@ -283,6 +301,29 @@ For each page:
 - ✅ Sitemap submitted
 - ✅ Mobile-friendly test passed
 - ✅ No broken links
+
+## Self-Annealing
+
+When optimization targets aren't met:
+
+### Score Regression
+If optimizations lower a score:
+1. **Isolate** - Revert last change to find the cause
+2. **Analyze** - Why did it hurt performance? (e.g., heavy library added)
+3. **Alternative** - Find lighter way to achieve same goal
+4. **Retry** - Apply optimization and re-measure
+
+### Missing Tags Detected
+If audit shows missing meta tags:
+1. **Check Template** - Is the page missing the header partial?
+2. **Fix content** - Add missing content to page source
+3. **Verify** - Re-run audit on specific page
+
+### Structured Data Errors
+If Google Rich Results Test fails:
+1. **Validate** - specific JSON-LD syntax error
+2. **Consult** - Check schema.org documentation
+3. **Fix** - Correct syntax and re-validate
 
 ## Tools
 

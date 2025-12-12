@@ -21,6 +21,25 @@ This workflow guides the creation of new reusable components for the FLOWST8 web
 - Base CSS files created
 - Component name and purpose defined
 
+## DOE Framework Integration
+
+### Directives to Consult
+Before creation, review these directives:
+- **`directives/design_system.md`**: Component patterns, token usage, accessibility rules
+- **`directives/website_architecture.md`**: BEM naming, file location standards
+
+### Orchestration
+This workflow orchestrates component creation:
+1. Define requirements and variants
+2. Implement HTML structure with semantic tags
+3. Apply styles using design tokens
+4. Add interactive logic (if required)
+5. Verify against quality standards
+6. Document for reuse
+
+### Execution
+Execute steps below. If component fails tests or conflicts with system, trigger self-annealing.
+
 ## Steps
 
 ### 1. Define Component Requirements
@@ -173,6 +192,31 @@ Add to `README.md` or create `COMPONENTS.md`:
 - ✅ Documented with usage examples
 - ✅ Tested in multiple browsers
 - ✅ Code is clean and commented
+
+## Self-Annealing
+
+When component creation faces issues:
+
+### Style Conflicts
+If new styles break existing layout:
+1. **Inspect** - Check specificity wars or shared class names
+2. **Isolate** - Ensure style is scoped (BEM)
+3. **Refactor** - Rename class or use more specific selector
+4. **Rescope** - Verify variable usage
+
+### Accessibility Failure
+If a11y tests fail:
+1. **Consult** - Check WCAG guidelines for pattern
+2. **Fix** - Add ARIA, fix structure, or adjust color
+3. **Reference** - Check design system for accessible pattern
+4. **Test** - Re-run screen reader test
+
+### Duplicate Pattern
+If realizes component already exists:
+1. **Stop** - Don't build duplicate
+2. **Evaluate** - Can existing component be extended?
+3. **Extend** - Add variant modifier to existing component
+4. **Document** - Update documentation with new variant
 
 ## Common Components to Create
 1. **Header/Navigation**
