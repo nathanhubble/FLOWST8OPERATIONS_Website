@@ -1,5 +1,5 @@
 {
-  "name": "december-website",
+  "name": "v.t.3-flowst8-operations",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "react": "^19.2.1",
-    "lucide-react": "^0.560.0",
     "react-dom": "^19.2.1",
-    "@google/genai": "^1.33.0"
+    "lucide-react": "^0.555.0",
+    "@google/genai": "^1.30.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLOWST8 OPERATIONS | Systemise Your Work</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            // New Modern Palette (Black/Grey + Electric Teal/Green)
+            primary: '#2dd4bf', // Teal 400 (Electric Teal)
+            'primary-dark': '#14b8a6', // Teal 500
+            secondary: '#10b981', // Emerald 500 (Electric Green)
+            'secondary-dark': '#059669', // Emerald 600
+            accent: '#38bdf8', // Sky 400
+            orange: '#fb923c', // Orange 400
+
+            // Backgrounds - Zinc Scale for true Black/Grey feel
+            background: '#09090b', // Zinc 950
+            surface: '#18181b', // Zinc 900
+            'surface-highlight': '#27272a', // Zinc 800
+
+            // Text
+            text: '#f8fafc', // Slate 50
+            'text-muted': '#a1a1aa', // Zinc 400
+          },
+          animation: {
+            'marquee': 'marquee 40s linear infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 3s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            marquee: {
+              '0%': { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+            glow: {
+              '0%': { boxShadow: '0 0 20px rgba(45, 212, 191, 0.5)' }, // Teal glow
+              '100%': { boxShadow: '0 0 40px rgba(16, 185, 129, 0.6)' }  // Green glow
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #09090b;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    /* Modern Glass Panel */
+    .glass-panel {
+      background: rgba(24, 24, 27, 0.6);
+      /* Zinc 900 @ 60% */
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .glass-panel:hover {
+      border-color: rgba(45, 212, 191, 0.4);
+      background: rgba(39, 39, 42, 0.7);
+    }
+
+    /* Text Gradients */
+    .text-gradient {
+      background: linear-gradient(135deg, #f8fafc 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-brand {
+      background: linear-gradient(to right, #2dd4bf, #10b981);
+      /* Teal to Green */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Glow Effects */
+    .blob-teal {
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+    }
+
+    .blob-green {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+    }
+
+    .blob-cyan {
+      background: radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+    }
+
+    .blob-orange {
+      background: radial-gradient(circle, rgba(251, 146, 60, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #09090b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2dd4bf;
+    }
+
+    /* Selection Color */
+    ::selection {
+      background: #2dd4bf;
+      color: #fff;
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/index.tsx"></script>
+</body>
+
+</html>

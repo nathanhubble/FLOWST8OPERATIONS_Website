@@ -1,38 +1,41 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+// Ensure API Key is present. In a real app, strict checks or error boundaries would apply.
+const apiKey = process.env.API_KEY || '';
 
-export const generateWorkflowIdea = async (input: string): Promise<string> => {
+const ai = new GoogleGenAI({ apiKey });
+
+export const generateBlueprint = async (userPrompt: string): Promise<string> => {
+  if (!apiKey) {
+    return "Error: API Key is missing. Please configure process.env.API_KEY.";
+  }
+
   try {
-    const model = 'gemini-2.5-flash';
-    const prompt = `
-      You are an expert Operations Architect at FLOWST8. 
-      The user wants to automate: "${input}".
+    const systemInstruction = `
+      You are an expert Systems Architect for FLOWST8. 
+      Your goal is to take a user's operational problem and output a concise, technical "Blueprint" solution.
+      Style the output like a technical log or terminal readout.
       
-      Create a concise, 3-step automation workflow proposal.
-      Format it as a JSON object with this structure (do not include markdown code blocks, just raw JSON):
-      {
-        "title": "A catchy title for the workflow",
-        "steps": [
-          { "tool": "Tool Name (e.g. Zapier, Make, Slack)", "action": "Short action description" },
-          { "tool": "Tool Name", "action": "Short action description" },
-          { "tool": "Tool Name", "action": "Short action description" }
-        ],
-        "efficiencyGain": "Estimated hours saved per week (e.g., '5+ hours/week')"
-      }
+      Structure:
+      1. DIAGNOSIS: 1 sentence summary of the bottleneck.
+      2. STACK: List 3-4 specific tools (e.g., Airtable, Make, OpenAI, Slack).
+      3. PROTOCOL: A step-by-step logic flow (Logic 1 -> Logic 2 -> Logic 3).
+      
+      Keep it punchy, cyber-tech, and under 150 words.
     `;
 
     const response = await ai.models.generateContent({
-      model,
-      contents: prompt,
+      model: 'gemini-2.5-flash',
+      contents: userPrompt,
       config: {
-        responseMimeType: 'application/json'
+        systemInstruction: systemInstruction,
+        temperature: 0.7,
       }
     });
 
-    return response.text || "{}";
+    return response.text || "System Error: No response data received.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw error;
+    return "System Malfunction: Unable to generate blueprint. Please try again later.";
   }
 };

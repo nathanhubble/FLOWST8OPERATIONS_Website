@@ -1,159 +1,173 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FLOWST8 OPERATIONS | Systemise Your Work</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-    rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Space Grotesk', 'sans-serif'],
-          },
-          colors: {
-            // New Modern Palette (Black/Grey + Electric Teal/Green)
-            primary: '#2dd4bf', // Teal 400 (Electric Teal)
-            'primary-dark': '#14b8a6', // Teal 500
-            secondary: '#10b981', // Emerald 500 (Electric Green)
-            'secondary-dark': '#059669', // Emerald 600
-            accent: '#38bdf8', // Sky 400
-            orange: '#fb923c', // Orange 400
-
-            // Backgrounds - Zinc Scale for true Black/Grey feel
-            background: '#09090b', // Zinc 950
-            surface: '#18181b', // Zinc 900
-            'surface-highlight': '#27272a', // Zinc 800
-
-            // Text
-            text: '#f8fafc', // Slate 50
-            'text-muted': '#a1a1aa', // Zinc 400
-          },
-          animation: {
-            'marquee': 'marquee 40s linear infinite',
-            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'float': 'float 6s ease-in-out infinite',
-            'glow': 'glow 3s ease-in-out infinite alternate',
-          },
-          keyframes: {
-            marquee: {
-              '0%': { transform: 'translateX(0)' },
-              '100%': { transform: 'translateX(-50%)' },
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FLOWST8 OPERATIONS</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧊</text></svg>" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              void: '#0F1115',
+              'off-white': '#EAEAEA',
+              'mint-start': '#A0F0E6',
+              'mint-end': '#FFFFFF',
             },
-            float: {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-20px)' },
+            fontFamily: {
+              sans: ['Manrope', 'sans-serif'],
+              display: ['Space Grotesk', 'sans-serif'],
             },
-            glow: {
-              '0%': { boxShadow: '0 0 20px rgba(45, 212, 191, 0.5)' }, // Teal glow
-              '100%': { boxShadow: '0 0 40px rgba(16, 185, 129, 0.6)' }  // Green glow
+            boxShadow: {
+              'hard': '4px 4px 0px 0px #000000',
+            },
+            animation: {
+              'scroll': 'scroll 60s linear infinite',
+              'blink': 'blink 1s step-end infinite',
+              'spin-slow': 'spin 10s linear infinite',
+              'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              scroll: {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(-50%)' },
+              },
+              blink: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0' },
+              },
+              'pulse-glow': {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.5' },
+              }
             }
-          }
-        }
+          },
+        },
       }
-    }
-  </script>
-  <style>
-    body {
-      background-color: #09090b;
-      color: #f8fafc;
-      overflow-x: hidden;
-    }
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background-color: #0F1115;
+        color: #EAEAEA;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      
+      /* Infinite Blueprint Animation */
+      .blueprint-container {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        perspective: 1000px;
+        background-color: #0F1115;
+        z-index: 0;
+      }
+      .blueprint-floor {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background-image: 
+          linear-gradient(rgba(160, 240, 230, 0.15) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(160, 240, 230, 0.15) 1px, transparent 1px);
+        background-size: 50px 50px;
+        transform: rotateX(60deg);
+        animation: blueprint-scroll 3s linear infinite;
+      }
+      .blueprint-vignette {
+        position: absolute;
+        inset: 0;
+        /* Radial gradient: Charcoal Center -> Transparent Edge */
+        /* Hides grid in center for readability */
+        background: radial-gradient(circle at 50% 50%, #0F1115 10%, rgba(15, 17, 21, 0.8) 40%, transparent 100%);
+        pointer-events: none;
+      }
+      @keyframes blueprint-scroll {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 50px; }
+      }
 
-    /* Modern Glass Panel */
-    .glass-panel {
-      background: rgba(24, 24, 27, 0.6);
-      /* Zinc 900 @ 60% */
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
+      /* Blueprint Grid Pattern for other sections */
+      .blueprint-grid {
+        background-image:
+          linear-gradient(rgba(160, 240, 230, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(160, 240, 230, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
 
-    .glass-panel:hover {
-      border-color: rgba(45, 212, 191, 0.4);
-      background: rgba(39, 39, 42, 0.7);
-    }
-
-    /* Text Gradients */
-    .text-gradient {
-      background: linear-gradient(135deg, #f8fafc 0%, #a1a1aa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .text-gradient-brand {
-      background: linear-gradient(to right, #2dd4bf, #10b981);
-      /* Teal to Green */
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Glow Effects */
-    .blob-teal {
-      background: radial-gradient(circle, rgba(45, 212, 191, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-    }
-
-    .blob-green {
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-    }
-
-    .blob-cyan {
-      background: radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-    }
-
-    .blob-orange {
-      background: radial-gradient(circle, rgba(251, 146, 60, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #09090b;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #27272a;
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #2dd4bf;
-    }
-
-    /* Selection Color */
-    ::selection {
-      background: #2dd4bf;
-      color: #fff;
-    }
-  </style>
+      /* Isometric Data Stream Animation (Retained if needed elsewhere) */
+      .iso-scene {
+        position: relative;
+        width: 280px; 
+        height: 280px;
+        transform-style: preserve-3d;
+        transform: rotateX(60deg) rotateZ(-45deg);
+        will-change: transform;
+      }
+      .iso-block {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background: rgba(15, 17, 21, 0.85); 
+        border: 2px solid #A0F0E6; 
+        box-shadow: 4px 4px 0px 0px #000000;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(4px);
+        will-change: transform, background, border-color;
+      }
+      .iso-block:hover {
+        background: rgba(160, 240, 230, 0.25);
+        border-color: #FFFFFF;
+        box-shadow: 8px 8px 0px 0px #000000;
+        z-index: 10;
+        animation-play-state: paused;
+        transform: translateZ(40px) !important;
+        cursor: crosshair;
+      }
+      @keyframes iso-wave {
+        0%, 100% { transform: translateZ(0px); }
+        50% { transform: translateZ(20px); }
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "react": "https://esm.sh/react@^19.2.1",
+    "lucide-react": "https://esm.sh/lucide-react@^0.560.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.33.0"
   }
 }
 </script>
-  <link rel="stylesheet" href="/index.css">
+<!-- Cal embed script -->
+<script type="text/javascript">
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", "discovery-call", {origin:"https://app.cal.com"});
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-
-<body>
-  <div id="root"></div>
+  <body>
+    <div id="root"></div>
   <script type="module" src="/src/index.tsx"></script>
 </body>
-
 </html>

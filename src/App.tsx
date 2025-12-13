@@ -1,581 +1,387 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  Menu, X, ChevronRight, Check, ArrowRight,
-  Settings, BarChart, Code, Clock, Zap, Database,
-  Users, Briefcase, Rocket, ChevronDown, MessageSquare
-} from 'lucide-react';
-import { Button } from './components/ui/Button';
-import { FadeIn } from './components/ui/FadeIn';
-import { Marquee } from './components/Marquee';
-import { InteractiveDemo } from './components/InteractiveDemo';
-import { ModalOverlay } from './components/Modals';
+import React, { useState, useEffect } from 'react';
+import { AUDIENCE_TAGS, WHY_US_CARDS, SERVICES, CAPABILITIES, FAQ_ITEMS, FOOTER_LINKS } from './constants';
 import { ModalType } from './types';
+import Navbar from './components/Navbar';
+import Section from './components/Section';
+import Button from './components/Button';
+import Card from './components/Card';
+import Marquee from './components/Marquee';
+import Terminal from './components/Terminal';
+import FaqAccordion from './components/FaqAccordion';
+import Modal from './components/Modal';
+import Diagnostic from './components/Diagnostic';
+import { ArrowRight, Check, Filter, FileText, Send, UserPlus, RefreshCw, BarChart, Calendar, AppWindow, Bot, Infinity } from 'lucide-react';
 
-// --- ANIMATED BACKGROUND COMPONENT ---
-const CyberGrid = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-
-    const particles: { x: number, y: number, vx: number, vy: number }[] = [];
-    const particleCount = Math.min(Math.floor(width * height / 12000), 100); // Responsive count
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5
-      });
-    }
-
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
-    };
-
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const animate = () => {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, width, height);
-
-      // Update and draw particles
-      particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Bounce off edges
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
-
-        // Draw Dot
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = i % 2 === 0 ? '#2dd4bf' : '#10b981'; // Primary / Secondary
-        ctx.fill();
-
-        // Draw Connections to other particles
-        particles.slice(i + 1).forEach(p2 => {
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(45, 212, 191, ${0.15 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        });
-
-        // Draw Connections to Mouse
-        const mdx = p.x - mouseRef.current.x;
-        const mdy = p.y - mouseRef.current.y;
-        const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-
-        if (mDist < 200) {
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(16, 185, 129, ${0.3 * (1 - mDist / 200)})`; // Brighter interaction
-          ctx.lineWidth = 0.8;
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
-          ctx.stroke();
-        }
-      });
-
-      requestAnimationFrame(animate);
-    };
-
-    const animId = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animId);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-40 mix-blend-screen"
-    />
-  );
+// Icon mapping helper
+const getIcon = (name: string) => {
+  const icons: {[key: string]: React.ReactNode} = {
+    'Filter': <Filter className="w-10 h-10 transition-colors duration-300" />,
+    'FileText': <FileText className="w-10 h-10 transition-colors duration-300" />,
+    'Send': <Send className="w-10 h-10 transition-colors duration-300" />,
+    'UserPlus': <UserPlus className="w-10 h-10 transition-colors duration-300" />,
+    'RefreshCw': <RefreshCw className="w-10 h-10 transition-colors duration-300" />,
+    'BarChart': <BarChart className="w-10 h-10 transition-colors duration-300" />,
+    'AppWindow': <AppWindow className="w-10 h-10 transition-colors duration-300" />,
+    'Bot': <Bot className="w-10 h-10 transition-colors duration-300" />,
+    'Infinity': <Infinity className="w-10 h-10 transition-colors duration-300" />
+  };
+  return icons[name] || <div />;
 };
 
-// --- DATA ---
-const SERVICES = [
-  {
-    title: "Training & Workshops",
-    description: "Empower your team to leverage AI tools effectively. We demystify the tech and teach practical, day-to-day application.",
-    icon: <Users className="w-8 h-8 text-primary" />,
-    features: [
-      "Team upskilling workshops",
-      "Prompt engineering mastery",
-      "Platform-specific training (ChatGPT, CRMs, Google, and more)"
-    ],
-    accent: "border-primary/20 hover:border-primary/50"
-  },
-  {
-    title: "Consultancy & Audits",
-    description: "We deep-dive into your operations, map workflows, find bottlenecks, and deliver an actionable roadmap with quantified ROI.",
-    icon: <BarChart className="w-8 h-8 text-secondary" />,
-    features: [
-      "Quick Strike Audits (1-2 week assessment identifying highest impact automations)",
-      "Transformation Audits (Multi-phase evaluation, risk analysis & solution architecture)",
-      "ROI & Cost of Inaction Analysis"
-    ],
-    accent: "border-secondary/20 hover:border-secondary/50"
-  },
-  {
-    title: "Custom Development",
-    description: "We build the intelligent systems that run your business 24/7. Robust, scalable, and designed for real-world complexity.",
-    icon: <Code className="w-8 h-8 text-white" />,
-    features: [
-      "Complex Make/Zapier/n8n scenarios",
-      "AI Agent development",
-      "Custom API integrations & workflows"
-    ],
-    accent: "border-white/20 hover:border-white/50"
-  }
-];
+function App() {
+  const [modalState, setModalState] = useState<{ isOpen: boolean; type: ModalType }>({
+    isOpen: false,
+    type: ModalType.NONE
+  });
 
-const EXAMPLES = [
-  { title: "Lead Qualification", desc: "Pipelines that instantly enrich, score, qualify, and route leads based on behaviour.", icon: <Zap className="text-secondary" /> },
-  { title: "Content Systems", desc: "Automated creation & distribution workflows across social platforms.", icon: <Database className="text-primary" /> },
-  { title: "Intelligent Outreach", desc: "Personalised outreach systems & inquiry response systems using LLMs.", icon: <MessageSquare className="text-pink-400" /> },
-  { title: "1-Click Client Onboarding", desc: "Generate contracts, project folders, welcome emails, and task boards with a single trigger.", icon: <Users className="text-accent" /> },
-  { title: "Multi-Platform CRM Sync", desc: "Keep CRMs, databases, project management, and billing systems perfectly synchronised.", icon: <Settings className="text-white" /> },
-  { title: "Auto-Generated Reports", desc: "Compile weekly metrics from 5+ sources into a formatted PDF summary — delivered on schedule.", icon: <BarChart className="text-green-400" /> },
-];
+  // SPA State Management
+  const [view, setView] = useState<'landing' | 'diagnostic'>('landing');
 
-const FAQS = [
-  { q: "Do I need technical experience?", a: "No. We handle the technical complexities. Our training is designed to be accessible for non-technical teams." },
-  { q: "What do I get from the free discovery call?", a: "A clear roadmap of where your inefficiencies are and a calculated ROI for fixing them." },
-  { q: "What types of businesses do you support?", a: "We work with SMBs of any sector, size, or revenue level." },
-  { q: "Difference between workshops, consultancy, and development?", a: "Workshops teach you. Consultancy plans the strategy. Development builds the machine." },
-  { q: "Can you work with our existing tools?", a: "Yes. We specialise in integrating tools you already use like Slack, HubSpot, and Google Workspace." },
-  { q: "How long does automation take?", a: "Quick wins take 1-2 weeks. Transformation systems can take 4-8+ weeks." },
-  { q: "What if my workflows are messy?", a: "That's normal. Part of our 'Consultancy' phase is cleaning and standardising processes before automating them." },
-  { q: "How much does it cost?", a: "Education and workshops are fixed fee. Consultancy and audits start from £1k. Custom development is quoted based on scope and complexity." },
-  { q: "Can you train my team after workflows are built?", a: "Absolutely. We provide in-person training, Loom video libraries, and live handover sessions." },
-  { q: "Do you offer ongoing support?", a: "Yes, we offer retainer packages for maintenance and iterative improvements." },
-];
+  const openModal = (type: ModalType) => setModalState({ isOpen: true, type });
+  const closeModal = () => setModalState({ isOpen: false, type: ModalType.NONE });
 
-// --- SUB-COMPONENTS ---
+  // Initialize Cal.com inline embed when booking modal opens
+  useEffect(() => {
+    if (modalState.type === ModalType.BOOKING) {
+      const cal = (window as any).Cal;
+      if (cal) {
+        cal.ns["discovery-call"]("inline", {
+          elementOrSelector: "#my-cal-inline-discovery-call",
+          config: { "layout": "month_view" },
+          calLink: "flowst8operations/discovery-call",
+        });
 
-const HeroSection = ({ onBook }: { onBook: () => void }) => (
-  <section className="relative min-h-screen flex items-center justify-center pt-32 pb-16 overflow-hidden bg-background">
-    {/* Animated Cyber Grid Background */}
-    <CyberGrid />
+        cal.ns["discovery-call"]("ui", { "hideEventTypeDetails": false, "layout": "month_view" });
+      }
+    }
+  }, [modalState.type]);
 
-    {/* Subtle Gradient Overlay for Text Readability */}
-    <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background pointer-events-none" />
-
-    <div className="container mx-auto px-4 relative z-10 text-center">
-      <FadeIn delay={150}>
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/10 text-primary text-sm font-medium mb-8 shadow-[0_0_10px_rgba(45,212,191,0.2)]">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-          </span>
-          Accepting New Clients for Q4
-        </div>
-      </FadeIn>
-
-      <FadeIn delay={200} className="relative">
-        <h1 className="text-6xl md:text-8xl font-display font-bold leading-tight tracking-tight mb-8 text-white drop-shadow-2xl">
-          Systemise Your Work. <br />
-          <span className="text-gradient-brand animate-glow">Scale Your Impact.</span>
-        </h1>
-      </FadeIn>
-
-      <FadeIn delay={300}>
-        <p className="text-xl md:text-2xl text-text-muted max-w-2xl mx-auto mb-12 leading-relaxed font-light">
-          FLOWST8 OPERATIONS eliminates the manual work slowing your team down through expert <span className="text-white font-medium">AI training, automation, and operational consulting</span>.
-        </p>
-      </FadeIn>
-
-      <FadeIn delay={400} className="flex flex-col sm:flex-row sm:items-stretch justify-center gap-6">
-        <Button size="lg" onClick={onBook} className="w-full sm:w-auto text-lg whitespace-nowrap px-8">
-          Book Your Free Discovery Call <ArrowRight className="ml-2 w-5 h-5 flex-shrink-0" />
-        </Button>
-        <Button variant="secondary" size="lg" onClick={() => document.getElementById('examples')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto text-lg whitespace-nowrap px-8">
-          See Real Workflow Examples
-        </Button>
-      </FadeIn>
-
-
-    </div>
-
-    <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-  </section>
-);
-
-const SectionHeading = ({ children, subtitle, center = true }: { children?: React.ReactNode, subtitle?: string, center?: boolean }) => (
-  <div className={`mb-16 ${center ? 'text-center' : ''}`}>
-    <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 text-white tracking-tight">{children}</h2>
-    {subtitle && <p className="text-text-muted text-xl max-w-2xl mx-auto font-light">{subtitle}</p>}
-  </div>
-);
-
-// --- MAIN COMPONENT ---
-
-export default function App() {
-  const [modalType, setModalType] = useState<ModalType>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const openModal = (type: ModalType) => setModalType(type);
-  const closeModal = () => setModalType(null);
-
-  const scrollToSection = (id: string) => {
-    setMobileMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const renderModalContent = () => {
+    switch (modalState.type) {
+      case ModalType.BOOKING:
+        return (
+          <div className="w-full h-[600px] md:h-[700px] bg-void">
+             {/* This container handles the Cal.com embed gracefully */}
+             <div style={{width:"100%", height:"100%", overflow:"scroll"}} id="my-cal-inline-discovery-call"></div>
+          </div>
+        );
+      case ModalType.ABOUT:
+        return <div className="p-8"><p className="text-gray-300">FLOWST8 is an operations engineering firm established in 2025. We believe in code over chaos.</p></div>;
+      case ModalType.CONTACT:
+        return <div className="p-8"><p className="text-gray-300">Email us: system@flowst8.ops</p></div>;
+      case ModalType.PRIVACY:
+        return <div className="p-8"><p className="text-gray-300">Your data is yours. We do not store your blueprint inputs.</p></div>;
+      default:
+        return null;
+    }
   };
 
+  // Render Diagnostic View
+  if (view === 'diagnostic') {
+    return (
+      <div className="min-h-screen bg-void text-off-white font-sans selection:bg-mint-start selection:text-black animate-in fade-in duration-300">
+         <Diagnostic 
+            onBookAudit={() => openModal(ModalType.BOOKING)} 
+            onBack={() => setView('landing')} 
+         />
+         <Modal 
+            isOpen={modalState.isOpen} 
+            onClose={closeModal} 
+            title={'Schedule Audit'}
+            size={'large'}
+         >
+            {renderModalContent()}
+         </Modal>
+      </div>
+    );
+  }
+
+  // Render Home View
   return (
-    <div className="bg-background min-h-screen text-text selection:bg-primary selection:text-white font-sans">
+    <div className="min-h-screen bg-void text-off-white font-sans selection:bg-mint-start selection:text-black overflow-x-hidden relative animate-in fade-in duration-300">
+      <Navbar onOpenModal={openModal} onNavigate={setView} />
 
-      {/* HEADER - Floating Glass Bar */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-4xl transition-all">
-        <div className="glass-panel rounded-full px-6 md:px-8 py-3 flex items-center justify-between shadow-2xl border border-white/10 bg-surface/80">
-          <div className="text-xl font-display font-bold tracking-tight text-white flex items-center gap-2">
-            FLOWST8 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">OPERATIONS</span><span className="text-white">.</span>
-          </div>
-
-          <nav className="hidden md:flex items-center space-x-8">
-            <button onClick={() => scrollToSection('services')} className="text-gray-400 hover:text-white transition-colors text-sm font-medium">Services</button>
-            <button onClick={() => scrollToSection('process')} className="text-gray-400 hover:text-white transition-colors text-sm font-medium">How it Works</button>
-            <button onClick={() => scrollToSection('examples')} className="text-gray-400 hover:text-white transition-colors text-sm font-medium">Examples</button>
-            <Button size="sm" onClick={() => openModal('booking')} className="shadow-none py-2 px-4 rounded-full">Book Discovery Call</Button>
-          </nav>
-
-          <button className="md:hidden text-white p-2 hover:bg-white/10 rounded-full transition-colors" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
+      {/* Hero Section - The Monolith */}
+      <div className="relative pt-[180px] pb-[160px] overflow-hidden flex items-center justify-center min-h-[90vh]">
+        {/* Infinite Blueprint Background */}
+        <div className="blueprint-container">
+           <div className="blueprint-floor"></div>
+           <div className="blueprint-vignette"></div>
         </div>
-      </header>
-
-      {/* MOBILE MENU */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-30 bg-background pt-32 px-4 md:hidden animate-in slide-in-from-right duration-200">
-          <div className="flex flex-col space-y-6 text-xl font-display font-bold">
-            <button onClick={() => scrollToSection('services')} className="text-left border-b border-white/10 pb-4 text-white">Services</button>
-            <button onClick={() => scrollToSection('process')} className="text-left border-b border-white/10 pb-4 text-white">How it Works</button>
-            <button onClick={() => scrollToSection('examples')} className="text-left border-b border-white/10 pb-4 text-white">Examples</button>
-            <button onClick={() => { setMobileMenuOpen(false); openModal('contact'); }} className="text-left border-b border-white/10 pb-4 text-white">Contact</button>
-            <Button fullWidth onClick={() => { setMobileMenuOpen(false); openModal('booking'); }}>Book Call</Button>
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-[900px] mx-auto px-6 text-center flex flex-col items-center">
+          <span className="inline-block px-3 py-1 mb-8 border border-gray-600 rounded-full bg-[#15171c]/80 backdrop-blur-sm text-xs font-mono text-mint-start tracking-widest uppercase">
+            Accepting New Clients for Q4
+          </span>
+          <h1 className="font-display font-bold text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tighter mb-8 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500 drop-shadow-lg">
+            THE ARCHITECTURE<br />OF FLOW.
+          </h1>
+          <p className="max-w-2xl text-xl md:text-2xl text-gray-400 mb-12 leading-relaxed">
+            We engineer intelligent, self-sustaining operational ecosystems. Scale your output without scaling the bother.
+          </p>
+          <div className="flex flex-col md:flex-row gap-6 justify-center items-center w-full flex-wrap">
+            <Button onClick={() => openModal(ModalType.BOOKING)} className="min-w-[200px]">
+              Book Strategy Call
+            </Button>
+            <Button variant="outline" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="min-w-[200px]">
+              Explore Methods
+            </Button>
+            {/* New Diagnostic CTA - Updated for SPA */}
+            <button 
+              onClick={() => setView('diagnostic')}
+              className="px-6 py-3 min-w-[200px] font-display font-bold text-sm uppercase tracking-wider border-2 border-dashed border-mint-start text-mint-start transition-all duration-200 hover:bg-mint-start hover:text-black hover:-translate-y-1 hover:shadow-hard text-center flex items-center justify-center"
+            >
+              Run Efficiency Scan
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
-      <main>
-        <HeroSection onBook={() => openModal('booking')} />
+      {/* Marquee */}
+      <Marquee />
 
-        <FadeIn direction="up" delay={200}>
-          <Marquee />
-        </FadeIn>
+      {/* Automation Terminal */}
+      <Section className="py-32">
+        <div className="text-center mb-12">
+          <h2 className="font-display font-bold text-4xl mb-4">VISUALISE THE FLOW</h2>
+          <p className="text-gray-400">Describe a repetitive task. Our AI will architect the blueprint instantly.</p>
+        </div>
+        <Terminal />
+      </Section>
 
-        {/* AUDIENCE PILLS */}
-        <section className="py-16 border-b border-white/5 bg-surface/20">
-          <div className="container mx-auto px-4 text-center">
-            <FadeIn delay={100}>
-              <p className="text-text-muted text-sm font-semibold uppercase tracking-widest mb-8">Built for ambitious teams tired of the busy work</p>
-              <div className="flex flex-wrap justify-center gap-4">
-                {["Founders", "Operations Leads", "Growth Teams", "Agencies", "Consultants", "SaaS Companies"].map((tag, i) => (
-                  <div key={i} className="px-6 py-2.5 rounded-full border border-white/5 bg-surface-highlight text-gray-300 hover:border-primary/50 hover:text-white hover:shadow-[0_0_15px_rgba(45,212,191,0.2)] transition-all cursor-default text-sm font-medium">
-                    {tag}
-                  </div>
-                ))}
+      {/* Audience Chips - UPDATED (Engineered for the Visionary) */}
+      <div className="w-full border-y border-gray-800 bg-[#121419] py-24">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h3 className="font-display font-bold text-sm uppercase tracking-[0.15em] text-off-white/70 mb-10">
+            ENGINEERED FOR THE VISIONARY
+          </h3>
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            {AUDIENCE_TAGS.map(tag => (
+              <span 
+                key={tag} 
+                className="px-5 py-2.5 border border-[#333] bg-white/[0.03] backdrop-blur-sm rounded-[4px] font-display text-xs md:text-sm uppercase text-mint-start tracking-wide transition-all duration-200 cursor-default hover:border-white hover:-translate-y-[2px] hover:shadow-[3px_3px_0px_#000000]"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Why Us */}
+      <Section id="why-us" className="py-32 relative">
+        {/* Massive Watermark - logo2.png */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+           <img 
+             src="logo2.png" 
+             alt="" 
+             className="w-[800px] opacity-[0.03] grayscale max-w-none" 
+             onError={(e) => { e.currentTarget.style.display = 'none'; }}
+           />
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 relative z-10">
+          <h2 className="font-display font-bold text-4xl md:text-5xl max-w-xl leading-tight">
+            WE DON'T JUST PATCH.<br/><span className="text-mint-start">WE ENGINEER.</span>
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8 relative z-10">
+          {WHY_US_CARDS.map((card, idx) => (
+            <Card key={idx} className="bg-[#15171c]">
+              <div className="w-12 h-12 bg-mint-start flex items-center justify-center border-2 border-black mb-6 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)]">
+                {card.icon}
               </div>
-            </FadeIn>
-          </div>
-        </section>
+              <h3 className="font-display font-bold text-xl mb-3">{card.title}</h3>
+              <p className="text-gray-400 leading-relaxed">{card.description}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
 
-        <FadeIn delay={200}>
-          <InteractiveDemo />
-        </FadeIn>
-
-        {/* BENEFITS */}
-        <section className="py-20 bg-background relative">
-          <div className="container mx-auto px-4">
-            <FadeIn>
-              <SectionHeading subtitle="We don't just build zaps. We build scalable operating systems.">
-                Why Work With Us
-              </SectionHeading>
-            </FadeIn>
-            <div className="grid md:grid-cols-3 gap-12">
-              {[
-                { h: "Expertise That Scales", p: "We combine technical engineering with business logic. Your automations won't just work; they'll handle growth without breaking.", i: <Rocket className="w-6 h-6 text-primary" /> },
-                { h: "Tailored to Your Reality", p: "We audit your specific workflows and tech stack to uncover the highest ROI opportunities — no cookie-cutters.", i: <Settings className="w-6 h-6 text-secondary" /> },
-                { h: "Sustainable Growth", p: "By removing manual bottlenecks, we unlock your team's capacity to focus on high-value strategy and creative work.", i: <BarChart className="w-6 h-6 text-accent" /> }
-              ].map((b, i) => (
-                <FadeIn key={i} delay={i * 100} className="p-8 rounded-3xl bg-surface border border-white/5 hover:border-primary/30 transition-all hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/5 group">
-                  <div className="mb-6 p-4 rounded-2xl bg-white/5 w-fit group-hover:bg-primary/20 transition-colors">
-                    {b.i}
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4 font-display text-white">{b.h}</h3>
-                  <p className="text-text-muted leading-relaxed text-lg">{b.p}</p>
-                </FadeIn>
-              ))}
+      {/* Services */}
+      <Section id="services" className="bg-[#121419] border-y-2 border-black py-32">
+        <div className="text-center mb-16">
+          <h2 className="font-display font-bold text-4xl">OPERATIONAL INFRASTRUCTURE</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {SERVICES.map((service, idx) => (
+            <div key={idx} className="group relative bg-void border-2 border-gray-800 p-8 hover:border-mint-start transition-colors duration-300">
+               <div className="absolute top-0 right-0 p-2 opacity-20 font-mono text-4xl font-bold group-hover:text-mint-start transition-colors">
+                 0{idx + 1}
+               </div>
+               <div className="mb-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-transform origin-left">
+                  <div className="text-white">{service.icon}</div>
+               </div>
+               <h3 className="font-display font-bold text-2xl mb-4 group-hover:text-mint-start transition-colors">{service.title}</h3>
+               <p className="text-gray-400">{service.description}</p>
             </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      </Section>
 
-        {/* SERVICES */}
-        <section id="services" className="py-20 relative bg-surface/20">
-          <div className="container mx-auto px-4">
-            <FadeIn>
-              <SectionHeading subtitle="From upskilling your team to building your entire operating system.">
-                Our Core Services
-              </SectionHeading>
-            </FadeIn>
+      {/* Method */}
+      <Section id="method" className="py-32">
+         {/* Added Section Header */}
+         <div className="text-center mb-16">
+            <span className="inline-block px-3 py-1 mb-6 border border-mint-start/30 bg-mint-start/10 rounded-full font-mono text-xs text-mint-start tracking-widest uppercase">
+              THE PROTOCOL
+            </span>
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-6 uppercase">
+              HOW WE ENGINEER SYSTEMS
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg mb-8 leading-relaxed">
+              From audit to deployment. A transparent, phased approach to building your infrastructure.
+            </p>
+            <div className="w-[100px] h-[1px] bg-[#333] mx-auto"></div>
+         </div>
 
-            <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-              {SERVICES.map((s, i) => (
-                <FadeIn key={i} delay={i * 100} className={`glass-panel p-8 md:p-10 rounded-3xl border ${s.accent} group relative overflow-hidden transition-all duration-500`}>
-                  <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-125 duration-700 pointer-events-none">
-                    {s.icon}
-                  </div>
-                  <div className="relative z-10 flex flex-col h-full">
-                    <div className="mb-8 p-4 bg-white/5 w-fit rounded-2xl border border-white/5">{s.icon}</div>
-                    <h3 className="text-2xl font-bold font-display mb-4 text-white">{s.title}</h3>
-                    <p className="text-text-muted mb-8 text-lg">{s.description}</p>
-                    <ul className="space-y-4 mb-10 flex-grow">
-                      {s.features.map((f, fi) => (
-                        <li key={fi} className="flex items-start text-sm text-gray-300">
-                          <div className="mt-1 mr-3 p-0.5 rounded-full bg-primary/20">
-                            <Check className="w-3 h-3 text-primary" />
-                          </div>
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button variant="outline" fullWidth onClick={() => openModal('booking')} className="mt-auto group-hover:bg-primary group-hover:text-white group-hover:border-primary">
-                      Learn More <ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </FadeIn>
-              ))}
+         <div className="grid md:grid-cols-3 gap-4">
+            {/* Phase 01 */}
+            <div className="group p-6 border-l-4 border-mint-start hover:bg-[#1a1c23] hover:shadow-hard hover:-translate-y-2 transition-all duration-300 cursor-default">
+               <span className="block font-mono text-sm text-gray-500 mb-2 group-hover:text-mint-start transition-colors">PHASE 01</span>
+               <h3 className="font-display font-bold text-3xl text-off-white group-hover:text-mint-start transition-colors">DISCOVERY</h3>
+               <p className="text-gray-400 mt-2 group-hover:text-off-white transition-colors">Audit & Map the ecosystem.</p>
             </div>
-          </div>
-        </section>
-
-        {/* PROCESS TIMELINE */}
-        <section id="process" className="py-20 bg-background relative overflow-hidden">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#27272a_1px,transparent_1px),linear-gradient(to_bottom,#27272a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
-
-          <div className="container mx-auto px-4 relative z-10">
-            <FadeIn>
-              <SectionHeading center>How Development Works</SectionHeading>
-            </FadeIn>
-
-            <div className="max-w-5xl mx-auto mt-12 relative">
-              {/* Line */}
-              <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
-
-              {[
-                { step: "01", title: "Discovery & Mapping", desc: "We audit your current state, interview key stakeholders, and map every manual process to identify high-impact automation opportunities." },
-                { step: "02", title: "Design & Build", desc: "Our engineers architect the solution using best-in-class tools (Make, OpenAI, n8n, etc.), rigorously testing for edge cases and failure points." },
-                { step: "03", title: "Deploy & Support", desc: "We launch the system, train your team, and provide ongoing support for monitoring, error-handling, and continuous improvement as your needs evolve." }
-              ].map((item, i) => (
-                <FadeIn key={i} direction={i % 2 === 0 ? 'left' : 'right'} className={`flex flex-col md:flex-row items-center justify-between mb-20 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="w-full md:w-5/12 mb-8 md:mb-0">
-                    <div className="glass-panel p-8 rounded-2xl border border-white/5 hover:border-primary/30 transition-colors shadow-xl">
-                      <h3 className="text-2xl font-bold font-display mb-3 text-white">{item.title}</h3>
-                      <p className="text-text-muted leading-relaxed">{item.desc}</p>
-                    </div>
-                  </div>
-
-                  <div className="w-16 h-16 rounded-full bg-surface border-4 border-background outline outline-2 outline-primary flex items-center justify-center text-primary font-bold z-10 relative shadow-[0_0_20px_rgba(45,212,191,0.4)] text-xl">
-                    {item.step}
-                  </div>
-
-                  <div className="w-full md:w-5/12 hidden md:block" />
-                </FadeIn>
-              ))}
+            {/* Phase 02 */}
+            <div className="group p-6 border-l-4 border-mint-start hover:bg-[#1a1c23] hover:shadow-hard hover:-translate-y-2 transition-all duration-300 cursor-default">
+               <span className="block font-mono text-sm text-gray-500 mb-2 group-hover:text-mint-start transition-colors">PHASE 02</span>
+               <h3 className="font-display font-bold text-3xl text-off-white group-hover:text-mint-start transition-colors">ARCHITECT</h3>
+               <p className="text-gray-400 mt-2 group-hover:text-off-white transition-colors">Design & Build the machine.</p>
             </div>
-          </div>
-        </section>
-
-        {/* EXAMPLES GRID */}
-        <section id="examples" className="py-20 bg-surface/30">
-          <div className="container mx-auto px-4">
-            <FadeIn>
-              <SectionHeading subtitle="Real workflows we've designed for clients.">What We Can Build</SectionHeading>
-            </FadeIn>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {EXAMPLES.map((ex, i) => (
-                <FadeIn key={i} delay={i * 50}>
-                  <div className="group p-8 rounded-2xl bg-surface border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all hover:-translate-y-1 hover:shadow-xl">
-                    <div className="mb-5 p-3 bg-surface-highlight w-fit rounded-xl border border-white/5 group-hover:scale-110 transition-transform">{ex.icon}</div>
-                    <h4 className="text-xl font-bold mb-3 text-white">{ex.title}</h4>
-                    <p className="text-text-muted text-sm leading-relaxed">{ex.desc}</p>
-                  </div>
-                </FadeIn>
-              ))}
+            {/* Phase 03 */}
+            <div className="group p-6 border-l-4 border-mint-start hover:bg-[#1a1c23] hover:shadow-hard hover:-translate-y-2 transition-all duration-300 cursor-default">
+               <span className="block font-mono text-sm text-gray-500 mb-2 group-hover:text-mint-start transition-colors">PHASE 03</span>
+               <h3 className="font-display font-bold text-3xl text-off-white group-hover:text-mint-start transition-colors">DEPLOY</h3>
+               <p className="text-gray-400 mt-2 group-hover:text-off-white transition-colors">Launch & Support velocity.</p>
             </div>
-            <FadeIn delay={300} className="mt-16 text-center">
-              <p className="text-text-muted mb-8 font-medium text-lg">And many, many more...</p>
-              <p className="font-light text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">If you can imagine it, we can build it.</p>
-            </FadeIn>
-          </div>
-        </section>
+         </div>
+      </Section>
 
-        {/* FEATURED CTA: DISCOVERY CALL */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <FadeIn>
-              <div className="bg-gradient-to-br from-surface to-background border border-white/10 rounded-[2.5rem] p-8 md:p-20 relative overflow-hidden shadow-2xl">
-                {/* Decorative Blobs */}
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen" />
-
-                <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
-                  <div>
-                    <h2 className="text-4xl md:text-5xl font-display font-bold mb-8 text-white">The Free Discovery Call</h2>
-                    <p className="text-xl text-gray-300 mb-10 leading-relaxed">
-                      Stop guessing. Let's review your actual workflows and calculate the real ROI of automation.
-                    </p>
-                    <ul className="space-y-6 mb-10">
-                      <li className="flex items-center text-lg text-gray-200"><div className="mr-4 p-1 rounded-full bg-green-500/20"><Check className="text-green-400 w-4 h-4" /></div> Audit current bottlenecks and time sinks</li>
-                      <li className="flex items-center text-lg text-gray-200"><div className="mr-4 p-1 rounded-full bg-green-500/20"><Check className="text-green-400 w-4 h-4" /></div> Identify immediate 'Quick Win' opportunities</li>
-                      <li className="flex items-center text-lg text-gray-200"><div className="mr-4 p-1 rounded-full bg-green-500/20"><Check className="text-green-400 w-4 h-4" /></div> Quantify time and cost savings and identify new revenue opportunities</li>
-                      <li className="flex items-center text-lg text-gray-200"><div className="mr-4 p-1 rounded-full bg-green-500/20"><Check className="text-green-400 w-4 h-4" /></div> Outline an actionable next-step plan</li>
-                    </ul>
-                    <Button size="lg" onClick={() => openModal('booking')} className="text-lg px-10 py-5">Book Your Free Discovery Call</Button>
+      {/* Examples Grid */}
+      <Section id="examples" className="bg-[#15171c] py-32">
+         <h2 className="font-display font-bold text-4xl mb-12 text-center">WHAT WE BUILD</h2>
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {CAPABILITIES.map((cap, idx) => (
+               <div 
+                  key={idx} 
+                  className="group relative bg-[#15171c] border-2 border-gray-800 hover:border-mint-start hover:bg-[#0F1115] hover:shadow-[6px_6px_0px_0px_#000000] hover:-translate-y-2 transition-all duration-300 p-8 flex flex-col items-center justify-center min-h-[280px] overflow-hidden cursor-default"
+               >
+                  {/* Default State: Icon & Title */}
+                  <div className="flex flex-col items-center transition-transform duration-300 group-hover:-translate-y-4">
+                     <div className="text-gray-400 group-hover:text-mint-start transition-colors duration-300 mb-4">
+                        {getIcon(cap.iconName)}
+                     </div>
+                     <h4 className="font-display font-bold text-xl text-off-white text-center">{cap.title}</h4>
                   </div>
 
-                  <div className="bg-surface/50 backdrop-blur-xl p-10 rounded-3xl border border-white/10 shadow-inner">
-                    <div className="flex items-start mb-8">
-                      <div className="p-3 bg-secondary/20 rounded-xl text-secondary mr-6"><Settings className="w-8 h-8" /></div>
-                      <div>
-                        <h4 className="font-bold text-xl text-white">Why is this free?</h4>
-                        <p className="text-gray-400 text-base mt-3 leading-relaxed">
-                          We lead with value. Most agencies gatekeep their knowledge. We believe if we show you the roadmap, you'll trust us to build the car.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="p-3 bg-primary/20 rounded-xl text-primary mr-6"><Clock className="w-8 h-8" /></div>
-                      <div>
-                        <h4 className="font-bold text-xl text-white">No Obligation</h4>
-                        <p className="text-gray-400 text-base mt-3 leading-relaxed">
-                          You walk away with actionable insights whether you hire us or not.
-                        </p>
-                      </div>
-                    </div>
+                  {/* Hover State: Reveal Content */}
+                  <div className="absolute bottom-6 left-0 w-full px-6 text-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 delay-75">
+                     <p className="text-gray-400 text-sm mb-4 leading-relaxed">{cap.detail}</p>
+                     <span className="inline-block px-3 py-1 bg-mint-start/10 border border-mint-start/30 rounded-full text-xs font-mono text-mint-start">
+                        {cap.metric}
+                     </span>
                   </div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </section>
+               </div>
+            ))}
+         </div>
+      </Section>
 
-        {/* FAQ */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <FadeIn>
-              <SectionHeading center>Common Questions</SectionHeading>
-              <div className="space-y-4">
-                {FAQS.map((faq, i) => (
-                  <div key={i} className="border border-white/5 rounded-2xl bg-surface overflow-hidden hover:border-white/10 transition-colors">
-                    <details className="group">
-                      <summary className="flex justify-between items-center p-6 cursor-pointer list-none">
-                        <span className="font-medium text-lg text-white">{faq.q}</span>
-                        <span className="transition-transform duration-300 group-open:rotate-180 p-1 rounded-full bg-white/5 group-hover:bg-white/10">
-                          <ChevronDown className="w-5 h-5 text-gray-400" />
-                        </span>
-                      </summary>
-                      <div className="text-text-muted px-6 pb-6 pt-0 animate-in slide-in-from-top-2 leading-relaxed">
-                        {faq.a}
-                      </div>
-                    </details>
-                  </div>
-                ))}
-              </div>
-            </FadeIn>
-          </div>
-        </section>
+      {/* CTA Discovery - Schematic Blueprint HUD Style */}
+      <Section className="py-32">
+        <div className="relative bg-void border-2 border-mint-start shadow-[8px_8px_0px_0px_#000000] p-8 md:p-16 flex flex-col md:flex-row gap-12 overflow-hidden blueprint-grid">
+           
+           {/* Decorative Corner Brackets */}
+           <div className="absolute top-[-2px] left-[-2px] w-8 h-8 border-t-4 border-l-4 border-mint-start z-20"></div>
+           <div className="absolute top-[-2px] right-[-2px] w-8 h-8 border-t-4 border-r-4 border-mint-start z-20"></div>
+           <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-mint-start z-20"></div>
+           <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-mint-start z-20"></div>
 
-        {/* FINAL CTA */}
-        <section className="py-32 relative text-center overflow-hidden">
-          {/* Background Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[150px] rounded-full pointer-events-none" />
+           {/* Watermark Icon - Fallback if logo2 missing, use Calendar icon */}
+           <div className="absolute bottom-[-40px] right-[-40px] w-80 h-80 opacity-[0.05] -rotate-12 pointer-events-none z-0">
+              <img src="logo2.png" alt="" className="w-full h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+           </div>
 
-          <div className="container mx-auto px-4 relative z-10">
-            <FadeIn>
-              <h2 className="text-5xl md:text-7xl font-display font-bold mb-10 text-white tracking-tight">
-                Ready To Stop Doing Everything <br />
-                <span className="text-text-muted">The Hard Way?</span>
+           <div className="flex-1 z-10">
+              <h2 className="font-display font-bold text-4xl md:text-5xl mb-6 text-white tracking-tight">
+                 READY TO ARCHITECT<br/>YOUR SYSTEM?
               </h2>
-              <div className="flex flex-col items-center">
-                <Button size="lg" onClick={() => openModal('booking')} className="text-lg px-12 py-5 shadow-[0_0_40px_rgba(45,212,191,0.4)] hover:shadow-[0_0_60px_rgba(16,185,129,0.6)]">
-                  Book Your Free Discovery Call
-                </Button>
-                <p className="mt-8 text-gray-500 text-sm font-medium tracking-wide">No pressure, no jargon - just clarity.</p>
+              <ul className="space-y-4 mb-8">
+                 {['Audit bottlenecks', 'Identify Quick Wins', 'Calculate ROI', 'Actionable Roadmap'].map(item => (
+                    <li key={item} className="flex items-center gap-3 font-medium text-lg text-off-white">
+                       <div className="text-mint-start"><Check size={24} strokeWidth={3} /></div>
+                       {item}
+                    </li>
+                 ))}
+              </ul>
+              <Button 
+                onClick={() => openModal(ModalType.BOOKING)} 
+                className="!bg-gradient-to-br !from-mint-start !to-mint-end !text-black !border-2 !border-black hover:!-translate-y-[2px] hover:!shadow-hard"
+              >
+                 Schedule Consultation <ArrowRight className="inline ml-2 w-4 h-4"/>
+              </Button>
+           </div>
+           
+           {/* Glassmorphism Why Free Box */}
+           <div className="md:w-1/3 bg-[rgba(160,240,230,0.05)] backdrop-blur-[5px] border border-dashed border-[#555] p-6 h-fit z-10 relative">
+              {/* Small accent for the box */}
+              <div className="absolute top-0 right-0 p-2">
+                 <div className="w-2 h-2 bg-mint-start rounded-full animate-pulse-glow"></div>
               </div>
-            </FadeIn>
-          </div>
-        </section>
-
-      </main>
-
-      {/* FOOTER */}
-      <footer className="border-t border-white/5 bg-surface py-12">
-        <div className="container mx-auto px-4">
-          <FadeIn direction="up">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <div className="mb-8 md:mb-0 text-center md:text-left">
-                <div className="text-2xl font-display font-bold tracking-tight mb-2 text-white">
-                  FLOWST8 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">OPERATIONS</span><span className="text-white">.</span>
-                </div>
-                <p className="text-gray-500 text-sm">Systemise Your Work. Scale Your Impact.</p>
-              </div>
-
-              <div className="flex space-x-10 text-sm text-gray-400 font-medium">
-                <button onClick={() => openModal('about')} className="hover:text-primary transition-colors">About</button>
-                <button onClick={() => openModal('contact')} className="hover:text-primary transition-colors">Contact</button>
-                <button onClick={() => openModal('privacy')} className="hover:text-primary transition-colors">Privacy</button>
-              </div>
-            </div>
-            <div className="mt-12 text-center text-xs text-gray-600">
-              &copy; {new Date().getFullYear()} FLOWST8 OPERATIONS. All rights reserved.
-            </div>
-          </FadeIn>
+              <h4 className="font-display font-bold text-lg mb-2 text-white uppercase tracking-wider">Why is this free?</h4>
+              <p className="text-sm leading-relaxed text-gray-300 font-mono">
+                 We architect trust. We show you the blueprint before you buy the building. It's the only way we operate.
+              </p>
+           </div>
         </div>
+      </Section>
+
+      {/* FAQ */}
+      <Section className="py-32">
+         <h2 className="font-display font-bold text-4xl text-center mb-16">COMMON QUERIES</h2>
+         <FaqAccordion items={FAQ_ITEMS} />
+      </Section>
+
+      {/* Footer */}
+      <footer className="border-t-2 border-gray-800 bg-[#0a0b0e] py-12">
+         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex flex-col items-start gap-4">
+               {/* Footer Logo - Text Replacement */}
+               <div className="flex items-center gap-2 font-display font-bold text-xl text-white tracking-tighter opacity-80">
+                  <span style={{ fontSize: '28px' }}>🧊</span> FLOWST8
+               </div>
+               <div className="text-gray-500 font-mono text-sm">
+                  © 2025 FLOWST8 OPERATIONS. <span className="text-green-500">● System Online</span>
+               </div>
+            </div>
+            <div className="flex gap-8">
+               {FOOTER_LINKS.map(link => (
+                  <button 
+                     key={link.key}
+                     onClick={() => openModal(ModalType[link.key as keyof typeof ModalType])}
+                     className="text-gray-400 hover:text-white text-sm uppercase font-medium tracking-wider"
+                  >
+                     {link.label}
+                  </button>
+               ))}
+            </div>
+         </div>
       </footer>
 
-      <ModalOverlay type={modalType} onClose={closeModal} />
-
-      {/* Small MessageSquare for Contact fixed on mobile */}
-      <button
-        onClick={() => openModal('contact')}
-        className="md:hidden fixed bottom-6 right-6 bg-primary text-white p-4 rounded-full shadow-lg z-40 border border-white/20"
+      {/* Global Modal */}
+      <Modal 
+         isOpen={modalState.isOpen} 
+         onClose={closeModal} 
+         title={modalState.type === ModalType.BOOKING ? 'Schedule Audit' : 
+                modalState.type === ModalType.ABOUT ? 'About Us' : 
+                modalState.type === ModalType.CONTACT ? 'Contact' : 'Privacy'}
+         size={modalState.type === ModalType.BOOKING ? 'large' : 'default'}
       >
-        <MessageSquare className="w-6 h-6" />
-      </button>
+         {renderModalContent()}
+      </Modal>
 
     </div>
   );
 }
+
+export default App;
