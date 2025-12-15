@@ -91,13 +91,13 @@ const QUESTIONS: Question[] = [
 const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
   const [stage, setStage] = useState<'intro' | 'questions' | 'processing' | 'gate' | 'results'>('intro');
   const [currentQIndex, setCurrentQIndex] = useState(0);
-  
+
   // Store answers mapped by Question ID
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [penalties, setPenalties] = useState<number[]>([]);
-  
+
   const [processingText, setProcessingText] = useState('Initialising...');
-  
+
   // Lead Capture Form
   const [leadForm, setLeadForm] = useState({ name: '', email: '', url: '' });
   const [isFormValid, setIsFormValid] = useState(false);
@@ -178,31 +178,65 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
       if (i >= texts.length) {
         clearInterval(interval);
         calculateMetrics(); // Calculate before showing gate
-        setStage('gate'); 
+        setStage('gate');
       }
     }, 800);
   };
 
   const calculateMetrics = () => {
-    // We access state 'answers' directly here. In a real strict environment we'd use a ref or pass values.
-    // Given the flow, answers are set before this runs.
-    
     const teamSize = answers['team'] || 1;
     const frictionHours = answers['friction'] || 2;
     const revenueImpact = answers['impact'] || 15;
-    
+    const stackQuality = answers['stack'] || 'integrated';
+
     // Step A: Operational Waste (Team * Hours * £35 * 4 weeks)
     const opWaste = teamSize * frictionHours * 35 * 4;
-    
+
     // Step B: Revenue Uplift (Team * Hours * RevImpact * 4 weeks)
     const uplift = teamSize * frictionHours * revenueImpact * 4;
-    
-    // Step C: Total
+
+    // Step C: Total Monthly Leakage
     const total = opWaste + uplift;
-    
-    // Efficiency Score
-    const totalPenalty = penalties.reduce((a, b) => a + b, 0);
-    const score = Math.max(0, 100 - totalPenalty);
+
+    // NEW IMPROVED SCORING LOGIC
+    // Base score starts at 100 and decreases based on multiple factors
+    let score = 100;
+
+    // 1. Team Size Penalty (larger teams = more systemic issues)
+    // Solo: -5, Small: -10, Growing: -15, Scaling: -20
+    if (teamSize >= 30) score -= 20;
+    else if (teamSize >= 12) score -= 15;
+    else if (teamSize >= 3) score -= 10;
+    else score -= 5;
+
+    // 2. Friction Hours Penalty (more hours lost = worse efficiency)
+    // <5hrs: -5, 5-10: -15, 10-20: -25, 20+: -35
+    if (frictionHours >= 25) score -= 35;
+    else if (frictionHours >= 15) score -= 25;
+    else if (frictionHours >= 7) score -= 15;
+    else score -= 5;
+
+    // 3. Stack Integrity Penalty (disconnected = chaos)
+    // Integrated: -0, Patchwork: -10, Disconnected: -20
+    if (stackQuality === 'disconnected') score -= 20;
+    else if (stackQuality === 'patchwork') score -= 10;
+
+    // 4. Revenue Impact Penalty (high value work being lost = bigger problem)
+    // Higher impact = more opportunity cost = worse score
+    if (revenueImpact >= 175) score -= 15;
+    else if (revenueImpact >= 75) score -= 10;
+    else if (revenueImpact >= 35) score -= 5;
+
+    // 5. Total Leakage Magnitude Penalty
+    // Scale: £0-2k: -0, £2-5k: -5, £5-10k: -10, £10-20k: -15, £20k+: -20
+    if (total >= 20000) score -= 20;
+    else if (total >= 10000) score -= 15;
+    else if (total >= 5000) score -= 10;
+    else if (total >= 2000) score -= 5;
+
+    // Ensure score stays between 0 and 100, but cap at 75 max
+    // (No one should feel they're "fully optimized" - always room to improve)
+    score = Math.max(0, Math.min(75, score));
 
     setMetrics({
       operationalWaste: opWaste,
@@ -218,7 +252,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
       setTouched({ email: true, url: true });
       return;
     }
-    
+
     // POST to Google Sheets via Apps Script
     const endpoint = import.meta.env.VITE_GOOGLE_SHEETS_ENDPOINT;
     if (endpoint) {
@@ -248,7 +282,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
     } else {
       console.log("LEAD CAPTURED (no endpoint configured):", leadForm, metrics);
     }
-    
+
     setStage('results');
   };
 
@@ -265,7 +299,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
       </div>
 
       {/* Back Link */}
-      <button 
+      <button
         onClick={onBack}
         className="absolute top-6 left-6 flex items-center gap-2 text-gray-500 hover:text-mint-start transition-colors font-mono text-sm z-50 cursor-pointer"
       >
@@ -274,7 +308,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
 
       {/* Main Container */}
       <div className="relative w-full max-w-2xl glass-panel border-2 border-mint-start p-8 md:p-12 shadow-[0_0_50px_rgba(160,240,230,0.1)] transition-all duration-500 min-h-[600px] flex flex-col justify-center">
-        
+
         {/* Corner Brackets */}
         <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-mint-start -translate-x-1 -translate-y-1 z-20"></div>
         <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-mint-start translate-x-1 -translate-y-1 z-20"></div>
@@ -308,7 +342,7 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
               <span>{QUESTIONS.length} Total</span>
             </div>
             <div className="w-full h-2 bg-gray-800 mb-10 border border-black">
-              <div 
+              <div
                 className="h-full bg-mint-start transition-all duration-500 ease-out shadow-[0_0_10px_#A0F0E6]"
                 style={{ width: `${((currentQIndex + 1) / QUESTIONS.length) * 100}%` }}
               ></div>
@@ -338,11 +372,11 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
         {/* STATE 3: PROCESSING */}
         {stage === 'processing' && (
           <div className="flex flex-col items-center justify-center py-12 animate-in fade-in duration-500">
-             <div className="relative w-24 h-24 mb-8">
+            <div className="relative w-24 h-24 mb-8">
               <div className="absolute inset-0 border-4 border-gray-800 rounded-full"></div>
               <div className="absolute inset-0 border-t-4 border-mint-start rounded-full animate-spin"></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                 <Activity className="text-mint-start w-8 h-8 animate-pulse" />
+                <Activity className="text-mint-start w-8 h-8 animate-pulse" />
               </div>
             </div>
             <h3 className="font-mono text-xl text-mint-start animate-pulse text-center">
@@ -357,139 +391,138 @@ const Diagnostic: React.FC<DiagnosticProps> = ({ onBookAudit, onBack }) => {
         {/* STATE 4 & 5: GATE & RESULTS (Shared Layout) */}
         {(stage === 'gate' || stage === 'results') && (
           <div className="relative w-full h-full">
-            
+
             {/* THE GATE OVERLAY */}
             {stage === 'gate' && (
               <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in zoom-in duration-300">
-                 {/* Progress Bar Top */}
-                 <div className="absolute top-0 w-full mb-8">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-mono text-mint-start tracking-widest animate-pulse">ANALYSIS COMPLETE. REPORT READY.</span>
-                        <span className="text-xs font-mono text-mint-start">95%</span>
-                    </div>
-                    <div className="w-full h-1 bg-gray-800">
-                        <div className="w-[95%] h-full bg-mint-start shadow-[0_0_10px_#A0F0E6]"></div>
-                    </div>
-                 </div>
+                {/* Progress Bar Top */}
+                <div className="absolute top-0 w-full mb-8">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-mono text-mint-start tracking-widest animate-pulse">ANALYSIS COMPLETE. REPORT READY.</span>
+                    <span className="text-xs font-mono text-mint-start">95%</span>
+                  </div>
+                  <div className="w-full h-1 bg-gray-800">
+                    <div className="w-[95%] h-full bg-mint-start shadow-[0_0_10px_#A0F0E6]"></div>
+                  </div>
+                </div>
 
-                 {/* Lock Icon */}
-                 <div className="inline-block p-4 border-2 border-mint-start rounded-full bg-black mb-6 shadow-hard z-10">
-                     <Lock className="w-8 h-8 text-mint-start" />
-                 </div>
+                {/* Lock Icon */}
+                <div className="inline-block p-4 border-2 border-mint-start rounded-full bg-black mb-6 shadow-hard z-10">
+                  <Lock className="w-8 h-8 text-mint-start" />
+                </div>
 
-                 {/* Form Container */}
-                 <div className="bg-[#15171c]/90 backdrop-blur-md border-2 border-gray-700 p-8 w-full max-w-md shadow-2xl relative">
-                    <h2 className="font-display font-bold text-2xl text-white mb-2 text-center uppercase">IDENTITY VERIFICATION REQUIRED</h2>
-                    <p className="text-gray-400 mb-6 font-mono text-xs text-center leading-relaxed">
-                       Your efficiency roadmap has been generated. Where should we send the data?
-                    </p>
-                    
-                    <div className="space-y-4">
-                       <div>
-                          <input 
-                             type="text" 
-                             value={leadForm.name}
-                             onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
-                             className="w-full bg-black border-2 border-gray-700 p-3 text-white focus:border-mint-start outline-none transition-colors placeholder-gray-600 font-sans"
-                             placeholder="Full Name"
-                          />
-                       </div>
-                       <div>
-                          <input 
-                             type="email" 
-                             value={leadForm.email}
-                             onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
-                             onBlur={() => setTouched(prev => ({...prev, email: true}))}
-                             className={`w-full bg-black border-2 ${touched.email && !leadForm.email.match(emailRegex) ? 'border-[#FF4444] animate-pulse' : 'border-gray-700'} p-3 text-white focus:border-mint-start outline-none transition-colors placeholder-gray-600 font-sans`}
-                             placeholder="name@company.com"
-                          />
-                       </div>
-                       <div>
-                          <input 
-                             type="text" 
-                             value={leadForm.url}
-                             onChange={(e) => setLeadForm({...leadForm, url: e.target.value})}
-                             onBlur={() => setTouched(prev => ({...prev, url: true}))}
-                             className={`w-full bg-black border-2 ${touched.url && !leadForm.url.match(urlRegex) ? 'border-[#FF4444] animate-pulse' : 'border-gray-700'} p-3 text-white focus:border-mint-start outline-none transition-colors placeholder-gray-600 font-sans`}
-                             placeholder="yourcompany.com"
-                          />
-                       </div>
-                       
-                       <button 
-                          onClick={handleGateSubmit}
-                          disabled={!isFormValid}
-                          className={`w-full py-4 mt-2 font-display font-bold text-sm uppercase tracking-wider transition-all duration-300 ${
-                            isFormValid 
-                              ? 'bg-gradient-to-r from-mint-start to-white text-black hover:shadow-hard hover:-translate-y-1' 
-                              : 'bg-gray-800 text-gray-500 cursor-not-allowed opacity-50'
-                          }`}
-                       >
-                          UNLOCK REPORT
-                       </button>
+                {/* Form Container */}
+                <div className="bg-[#15171c]/90 backdrop-blur-md border-2 border-gray-700 p-8 w-full max-w-md shadow-2xl relative">
+                  <h2 className="font-display font-bold text-2xl text-white mb-2 text-center uppercase">IDENTITY VERIFICATION REQUIRED</h2>
+                  <p className="text-gray-400 mb-6 font-mono text-xs text-center leading-relaxed">
+                    Your efficiency roadmap has been generated. Where should we send the data?
+                  </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <input
+                        type="text"
+                        value={leadForm.name}
+                        onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
+                        className="w-full bg-black border-2 border-gray-700 p-3 text-white focus:border-mint-start outline-none transition-colors placeholder-gray-600 font-sans"
+                        placeholder="Full Name"
+                      />
                     </div>
-                 </div>
+                    <div>
+                      <input
+                        type="email"
+                        value={leadForm.email}
+                        onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })}
+                        onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
+                        className={`w-full bg-black border-2 ${touched.email && !leadForm.email.match(emailRegex) ? 'border-[#FF4444] animate-pulse' : 'border-gray-700'} p-3 text-white focus:border-mint-start outline-none transition-colors placeholder-gray-600 font-sans`}
+                        placeholder="name@company.com"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        value={leadForm.url}
+                        onChange={(e) => setLeadForm({ ...leadForm, url: e.target.value })}
+                        onBlur={() => setTouched(prev => ({ ...prev, url: true }))}
+                        className={`w-full bg-black border-2 ${touched.url && !leadForm.url.match(urlRegex) ? 'border-[#FF4444] animate-pulse' : 'border-gray-700'} p-3 text-white focus:border-mint-start outline-none transition-colors placeholder-gray-600 font-sans`}
+                        placeholder="yourcompany.com"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleGateSubmit}
+                      disabled={!isFormValid}
+                      className={`w-full py-4 mt-2 font-display font-bold text-sm uppercase tracking-wider transition-all duration-300 ${isFormValid
+                          ? 'bg-gradient-to-r from-mint-start to-white text-black hover:shadow-hard hover:-translate-y-1'
+                          : 'bg-gray-800 text-gray-500 cursor-not-allowed opacity-50'
+                        }`}
+                    >
+                      UNLOCK REPORT
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
             {/* THE RESULTS (Blurred in Gate, Clear in Results) */}
             <div className={`transition-all duration-1000 ${stage === 'gate' ? 'filter blur-xl opacity-40 pointer-events-none select-none scale-95' : 'filter-none opacity-100 scale-100'}`}>
               <div className="text-center border-b-2 border-gray-800 pb-8 mb-8">
-                 <div className="flex items-center justify-center gap-2 text-gray-500 mb-6">
-                    <Terminal className="w-4 h-4" />
-                    <span className="font-mono text-xs tracking-[0.3em] uppercase">SCALING FRACTURED</span>
-                 </div>
-                
-                 <div className="mb-2 font-display font-bold text-sm text-gray-400 uppercase tracking-wider">ESTIMATED MONTHLY WASTE</div>
-                 <div className="relative inline-block">
-                    <h2 className="font-display font-bold text-6xl md:text-7xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-red-500 via-red-400 to-mint-start drop-shadow-2xl">
-                       {formatCurrency(stage === 'gate' ? metrics.totalLeakage : displayLeakage)}
-                    </h2>
-                 </div>
-                 
-                 {/* Insight Sentence */}
-                 <p className="mt-6 text-gray-300 max-w-lg mx-auto leading-relaxed">
-                    You are burning <span className="text-white font-bold">{formatCurrency(metrics.totalLeakage)}</span> every month on friction. 
-                    That is <span className="text-red-400 font-bold border-b border-red-500/50">{formatCurrency(metrics.annualLeakage)}</span> per year.
-                 </p>
+                <div className="flex items-center justify-center gap-2 text-gray-500 mb-6">
+                  <Terminal className="w-4 h-4" />
+                  <span className="font-mono text-xs tracking-[0.3em] uppercase">SCALING FRACTURED</span>
+                </div>
+
+                <div className="mb-2 font-display font-bold text-sm text-gray-400 uppercase tracking-wider">ESTIMATED MONTHLY WASTE</div>
+                <div className="relative inline-block">
+                  <h2 className="font-display font-bold text-6xl md:text-7xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-red-500 via-red-400 to-mint-start drop-shadow-2xl">
+                    {formatCurrency(stage === 'gate' ? metrics.totalLeakage : displayLeakage)}
+                  </h2>
+                </div>
+
+                {/* Insight Sentence */}
+                <p className="mt-6 text-gray-300 max-w-lg mx-auto leading-relaxed">
+                  You are burning <span className="text-white font-bold">{formatCurrency(metrics.totalLeakage)}</span> every month on friction.
+                  That is <span className="text-red-400 font-bold border-b border-red-500/50">{formatCurrency(metrics.annualLeakage)}</span> per year.
+                </p>
               </div>
 
               {/* Breakdown Grid */}
               <div className="grid grid-cols-2 gap-4 mb-8">
-                 <div className="bg-[#15171c] border border-gray-800 p-4 rounded-sm text-center">
-                    <div className="text-gray-500 text-xs uppercase font-mono mb-1">Operational Waste</div>
-                    <div className="text-white font-display font-bold text-xl">{formatCurrency(metrics.operationalWaste)}</div>
-                 </div>
-                 <div className="bg-[#15171c] border border-gray-800 p-4 rounded-sm text-center">
-                    <div className="text-mint-start text-xs uppercase font-mono mb-1">Missed Revenue</div>
-                    <div className="text-white font-display font-bold text-xl">{formatCurrency(metrics.revenueUplift)}</div>
-                 </div>
+                <div className="bg-[#15171c] border border-gray-800 p-4 rounded-sm text-center">
+                  <div className="text-gray-500 text-xs uppercase font-mono mb-1">Operational Waste</div>
+                  <div className="text-white font-display font-bold text-xl">{formatCurrency(metrics.operationalWaste)}</div>
+                </div>
+                <div className="bg-[#15171c] border border-gray-800 p-4 rounded-sm text-center">
+                  <div className="text-mint-start text-xs uppercase font-mono mb-1">Missed Revenue</div>
+                  <div className="text-white font-display font-bold text-xl">{formatCurrency(metrics.revenueUplift)}</div>
+                </div>
               </div>
 
               {/* Efficiency Score Bar */}
               <div className="mb-10">
-                 <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
-                    <span>EFFICIENCY SCORE</span>
-                    <span className={metrics.efficiencyScore > 80 ? "text-green-500" : metrics.efficiencyScore > 50 ? "text-yellow-500" : "text-red-500"}>
-                       {metrics.efficiencyScore}/100
-                    </span>
-                 </div>
-                 <div className="w-full h-4 bg-gray-800 border border-black skew-x-[-10deg]">
-                    <div 
-                       className={`h-full transition-all duration-1000 ${metrics.efficiencyScore > 80 ? "bg-green-500" : metrics.efficiencyScore > 50 ? "bg-yellow-500" : "bg-red-500"}`}
-                       style={{ width: `${metrics.efficiencyScore}%` }}
-                    ></div>
-                 </div>
+                <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
+                  <span>EFFICIENCY SCORE</span>
+                  <span className={metrics.efficiencyScore > 80 ? "text-green-500" : metrics.efficiencyScore > 50 ? "text-yellow-500" : "text-red-500"}>
+                    {metrics.efficiencyScore}/100
+                  </span>
+                </div>
+                <div className="w-full h-4 bg-gray-800 border border-black skew-x-[-10deg]">
+                  <div
+                    className={`h-full transition-all duration-1000 ${metrics.efficiencyScore > 80 ? "bg-green-500" : metrics.efficiencyScore > 50 ? "bg-yellow-500" : "bg-red-500"}`}
+                    style={{ width: `${metrics.efficiencyScore}%` }}
+                  ></div>
+                </div>
               </div>
 
               <div className="text-center space-y-4">
                 <h4 className="font-display font-bold text-3xl text-white uppercase">Stop the bleed.</h4>
-                
+
                 <Button onClick={onBookAudit} className="w-full !py-5 !text-lg shadow-[0_0_20px_rgba(160,240,230,0.3)] hover:shadow-[0_0_30px_rgba(160,240,230,0.5)]">
                   Book Quick Strike Audit
                 </Button>
 
                 <p className="text-xs text-gray-500 font-mono mt-4">
-                   FULL BREAKDOWN WILL BE ENCRYPTED AND SENT TO {leadForm.email || 'YOUR INBOX'}.
+                  FULL BREAKDOWN WILL BE ENCRYPTED AND SENT TO {leadForm.email || 'YOUR INBOX'}.
                 </p>
               </div>
             </div>

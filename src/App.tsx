@@ -171,10 +171,10 @@ function App() {
 
       {/* Why Us */}
       <Section id="why-us" className="py-32 relative">
-        {/* Massive Watermark - logo2.png */}
+        {/* Massive Watermark - monochrome logo */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
           <img
-            src="logo2.png"
+            src="/logo-monochrome-new.png"
             alt=""
             className="w-[800px] opacity-[0.03] grayscale max-w-none"
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -297,9 +297,9 @@ function App() {
           <div className="absolute bottom-[-2px] left-[-2px] w-8 h-8 border-b-4 border-l-4 border-mint-start z-20"></div>
           <div className="absolute bottom-[-2px] right-[-2px] w-8 h-8 border-b-4 border-r-4 border-mint-start z-20"></div>
 
-          {/* Watermark Icon - Fallback if logo2 missing, use Calendar icon */}
-          <div className="absolute bottom-[-40px] right-[-40px] w-80 h-80 opacity-[0.05] -rotate-12 pointer-events-none z-0">
-            <img src="logo2.png" alt="" className="w-full h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+          {/* Watermark Icon - positioned between left content and right box */}
+          <div className="absolute bottom-[60px] left-[45%] -translate-x-1/2 w-80 h-80 opacity-[0.12] -rotate-12 pointer-events-none z-0">
+            <img src="/logo-monochrome-new.png" alt="" className="w-full h-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           </div>
 
           <div className="flex-1 z-10">
@@ -343,13 +343,11 @@ function App() {
       </Section>
 
       {/* Footer */}
-      <footer className="border-t-2 border-gray-800 bg-[#0a0b0e] py-12">
+      <footer className="border-t-2 border-gray-800 bg-[#0a0b0e] py-6">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col items-start gap-4">
-            {/* Footer Logo - Text Replacement */}
-            <div className="flex items-center gap-2 font-display font-bold text-xl text-white tracking-tighter opacity-80">
-              <span style={{ fontSize: '28px' }}>🧊</span> FLOWST8
-            </div>
+            {/* Footer Logo */}
+            <img src="/logo-footer-horizontal.png" alt="FLOWST8 OPERATIONS" className="h-20 w-auto object-contain" />
             <div className="text-gray-500 font-mono text-sm">
               © 2025 FLOWST8 OPERATIONS. <span className="text-green-500">● System Online</span>
             </div>
